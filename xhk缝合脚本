@@ -748,7 +748,7 @@ Button(JiasjslsTab, "99可杀队友", function()
 end)
 
 Button(JiasjslsTab, "刷钻石?", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/sleepyvill/script/refs/heads/main/99nights.lua"))(
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/sleepyvill/script/refs/heads/main/99nights.lua"))()
     print("已加载！")
 end)
 
