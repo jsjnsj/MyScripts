@@ -742,6 +742,11 @@ Button(JiaposTab, "Doors XA", function()
     print("已加载！")
 end)
 
+Button(JipwkpjsTab, "死铁锅刷债券脚本", function()
+    getgenv().AutoExecute = true(loadstring or load)(game:HttpGet("https://raw.githubusercontent.com/hungquan99/HungHUB/main/loader.lua"))()
+    print("已加载！")
+end)
+
 Button(JiasjslsTab, "99可杀队友", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/atnew2025/Chinese-scripts/refs/heads/main/CPS-99nights"))()
     print("已加载！")
