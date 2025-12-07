@@ -751,6 +751,11 @@ Button(JipwkpjsTab, "死铁锅刷债券脚本", function()
     print("已加载！")
 end)
 
+Button(JipwkpjsTab, "死铁轨英文脚本", function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/gumanba/Scripts/main/DeadRails"))()
+    print("已加载！")
+end)
+
 Button(JiasjslsTab, "99可杀队友", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/atnew2025/Chinese-scripts/refs/heads/main/CPS-99nights"))()
     print("已加载！")
