@@ -95,6 +95,69 @@ Button(PlayerTab, "Yi指令台", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
     print("Infinite Yield 已加载！")
 end)
+    
+-- ========== 通用：全局夜视（地图覆盖） ==========
+local globalLighting = game:GetService("Lighting")
+local nightvisObj   = nil        -- 存放我们加的 PointLight
+Toggle(PlayerTab,"夜视",false,function(on)
+    if on then
+        -- 创建一个超亮、超远、无阴影的 PointLight 放在 Terrain 中心
+        nightvisObj = Instance.new("PointLight")
+        nightvisObj.Name = "GlobalNightVis"
+        nightvisObj.Range = 9999
+        nightvisObj.Brightness = 5
+        nightvisObj.Color = Color3.new(1,1,1)
+        nightvisObj.Shadows = false
+        nightvisObj.Parent = workspace.Terrain
+        -- 把环境调亮、去掉全局阴影
+        globalLighting.GlobalShadows = false
+        globalLighting.Ambient = Color3.new(1,1,1)
+        globalLighting.OutdoorAmbient = Color3.new(1,1,1)
+    else
+        if nightvisObj then nightvisObj:Destroy(); nightvisObj = nil end
+        globalLighting.GlobalShadows = true
+        globalLighting.Ambient = Color3.new(0,0,0)
+        globalLighting.OutdoorAmbient = Color3.new(127/255,127/255,127/255)
+    end
+    print("地图夜视 →",on and "开" or "关")
+end)
+
+-- ========== 通用：玩家穿墙（仅自己） ==========
+local noclipConn = nil
+Toggle(PlayerTab,"穿墙",false,function(on)
+    local lp = game.Players.LocalPlayer
+    if on then
+        noclipConn = game:GetService("RunService").Stepped:Connect(function()
+            local char = lp.Character
+            if char then
+                for _,p in pairs(char:GetDescendants()) do
+                    if p:IsA("BasePart") then p.CanCollide = false end
+                end
+            end
+        end)
+    else
+        if noclipConn then noclipConn:Disconnect(); noclipConn = nil end
+    end
+    print("穿墙 →",on and "开" or "关")
+end)
+
+-- ========== 通用：无限跳跃 ==========
+local infJumpConn = nil
+Toggle(PlayerTab, "无限跳跃", false, function(on)
+    local lp = game.Players.LocalPlayer
+    if on then
+        -- 只要检测到空格按下就再给一次跳跃能力
+        infJumpConn = game:GetService("UserInputService").JumpRequest:Connect(function()
+            local char = lp.Character
+            if char and char:FindFirstChildOfClass("Humanoid") then
+                char:FindFirstChildOfClass("Humanoid"):ChangeState(Enum.HumanoidStateType.Jumping)
+            end
+        end)
+    else
+        if infJumpConn then infJumpConn:Disconnect(); infJumpConn = nil end
+    end
+    print("无限跳跃 →", on and "开" or "关")
+end)
 
 -- ========== 旋转功能 - 死亡后自动恢复 ==========
 local angular = nil        -- BodyAngularVelocity 实例
