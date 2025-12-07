@@ -75,6 +75,10 @@ Button(YioapTab, "2创的我操你妈，你妈没了", function()
     print("2创的我操你妈，你妈没了")
 end)
 
+Button(YioapTab, "更新服务器", function()
+    print("更新服务器")
+end)
+
 -- 玩家设置标签
 Slider(PlayerTab, "移动速度", 16, 200, 16, function(value)
     local player = game.Players.LocalPlayer
