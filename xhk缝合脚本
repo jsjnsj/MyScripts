@@ -50,20 +50,19 @@ function Dropdown(a, b, c, d, e)
     return a:Dropdown({Title = b, Values = c, Value = d, Callback = e})
 end
 
-local YioapTab = Tab("公告", "door-open")
-local PlayerTab = Tab("通用", "user")
-local IuoTab = Tab("旋转", "star")
-local UiowpTab = Tab("其他脚本", "bird")
-local JiaposTab = Tab("Doors", "eye")
-local JipwkpjsTab = Tab("死铁轨", "eye")
-local JiasjslsTab = Tab("99", "eye")
-local JiapjdodTab = Tab("自然灾害", "eye")
-local JiapsukdTab = Tab("墨水游戏(不保证能进去)", "eye")
-local AuddkTab = Tab("被遗弃(不保证能进去)", "eye")
-local UiosjwlTab = Tab("复制", "moon")
+local Tab1 = Tab("公告", "door-open")
+local Tab2 = Tab("通用", "user")
+local Tab3 = Tab("旋转", "star")
+local Tab4 = Tab("其他脚本", "bird")
+local Tab5 = Tab("Doors", "eye")
+local Tab6 = Tab("死铁轨", "eye")
+local Tab7 = Tab("99", "eye")
+local Tab8 = Tab("自然灾害", "eye")
+local Tab9 = Tab("墨水游戏(不保证能进去)", "eye")
+local Tab10 = Tab("被遗弃(不保证能进去)", "eye")
 
 -- 公告页按钮
-YioapTab:Paragraph({
+Tab1:Paragraph({
     Title = "作者：",
     Desc = [[不想玩墨水]],
     Image = "door-open",
@@ -75,7 +74,7 @@ YioapTab:Paragraph({
     Padding = UDim.new(0, 1)
 })
 
-YioapTab:Paragraph({
+Tab1:Paragraph({
     Title = "赞助人：",
     Desc = [[无]],
     Image = "door-open",
@@ -87,9 +86,21 @@ YioapTab:Paragraph({
     Padding = UDim.new(0, 1)
 })
 
-YioapTab:Paragraph({
-    Title = "禁止二创:",
-    Desc = [[敢二创的代价是浮木死了]],
+Tab1:Paragraph({
+    Title = "禁止二创",
+    Desc = [[敢二创的代价是全家死了，然后祖上18代的坟墓也被闪电劈没]],
+    Image = "door-open",
+    ImageSize = 24,
+    Color = Color3.fromHex("#FFFFFF"),
+    BackgroundTransparency = 1,
+    OutlineColor = Color3.fromHex("#FFFFFF"),
+    OutlineThickness = 1,
+    Padding = UDim.new(0, 1)
+})
+
+Tab1:Paragraph({
+    Title = "更新:",
+    Desc = [[无]],
     Image = "door-open",
     ImageSize = 24,
     Color = Color3.fromHex("#FFFFFF"),
@@ -100,7 +111,7 @@ YioapTab:Paragraph({
 })
 
 -- 玩家设置标签
-Slider(PlayerTab, "移动速度", 16, 200, 16, function(value)
+Slider(Tab2, "移动速度", 16, 200, 16, function(value)
     local player = game.Players.LocalPlayer
     if player.Character then
         local humanoid = player.Character:FindFirstChildOfClass("Humanoid")
@@ -111,7 +122,7 @@ Slider(PlayerTab, "移动速度", 16, 200, 16, function(value)
     print("移动速度设置为: " .. value)
 end)
 
-Slider(PlayerTab, "跳跃高度", 50, 200, 50, function(value)
+Slider(Tab2, "跳跃高度", 50, 200, 50, function(value)
     local player = game.Players.LocalPlayer
     if player.Character then
         local humanoid = player.Character:FindFirstChildOfClass("Humanoid")
@@ -122,13 +133,13 @@ Slider(PlayerTab, "跳跃高度", 50, 200, 50, function(value)
     print("跳跃高度设置为: " .. value)
 end)
 
-Button(PlayerTab, "Yi指令台", function()
+Button(Tab2, "Yi指令台", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
     print("Infinite Yield 已加载！")
 end)
 
 -- 添加飞行按钮
-Button(PlayerTab, "飞行", function()
+Button(Tab2, "飞行", function()
     -- 如果飞行UI已存在，先销毁
     local existingGUI = game.Players.LocalPlayer.PlayerGui:FindFirstChild("main")
     if existingGUI then
@@ -584,7 +595,7 @@ end)
 -- ========== 通用：全局夜视（地图覆盖） ==========
 local globalLighting = game:GetService("Lighting")
 local nightvisObj   = nil        -- 存放我们加的 PointLight
-Toggle(PlayerTab,"夜视",false,function(on)
+Toggle(Tab2,"夜视",false,function(on)
     if on then
         -- 创建一个超亮、超远、无阴影的 PointLight 放在 Terrain 中心
         nightvisObj = Instance.new("PointLight")
@@ -609,7 +620,7 @@ end)
 
 -- ========== 通用：玩家穿墙（仅自己） ==========
 local noclipConn = nil
-Toggle(PlayerTab,"穿墙",false,function(on)
+Toggle(Tab2,"穿墙",false,function(on)
     local lp = game.Players.LocalPlayer
     if on then
         noclipConn = game:GetService("RunService").Stepped:Connect(function()
@@ -628,7 +639,7 @@ end)
 
 -- ========== 通用：无限跳跃 ==========
 local infJumpConn = nil
-Toggle(PlayerTab, "无限跳跃", false, function(on)
+Toggle(Tab2, "无限跳跃", false, function(on)
     local lp = game.Players.LocalPlayer
     if on then
         -- 只要检测到空格按下就再给一次跳跃能力
@@ -673,7 +684,7 @@ local function setSpin(speed)
 end
 
 -- 滑条控制
-Slider(IuoTab, "旋转速度", 0, 200, 0, setSpin)
+Slider(Tab3, "旋转速度", 0, 200, 0, setSpin)
 
 -- 重生自动恢复
 lp.CharacterAdded:Connect(function(char)
@@ -681,126 +692,158 @@ lp.CharacterAdded:Connect(function(char)
     if LAST_SPEED ~= 0 then setSpin(LAST_SPEED) end
 end)
 
-Button(UiowpTab, "XC", function()
+Button(Tab4, "XC", function()
     loadstring(game:HttpGet("https://pastebin.com/raw/gemxHwA1"))()
     print("已加载！")
 end)
 
-Button(UiowpTab, "导管中心", function()
+Button(Tab4, "导管中心", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/useranewrff/roblox-/main/导管中心"))()
     print("已加载！")
 end)
 
-Button(UiowpTab, "皮脚本", function()
+Button(Tab4, "皮脚本", function()
     getgenv().XiaoPi = "皮脚本QQ群1002100032" 
     loadstring(game:HttpGet("https://raw.githubusercontent.com/xiaopi77/xiaopi77/main/QQ1002100032-Roblox-Pi-script.lua"))()
     print("已加载！")
 end)
 
-Button(UiowpTab, "逆光脚本", function()
+Button(Tab4, "逆光脚本", function()
     getgenv().NiGuang = "逆光Q群980694674"
     loadstring(game:HttpGet("https://raw.githubusercontent.com/lool8/-/refs/heads/main/%E9%80%86%E5%85%89.lua"))()
     print("已加载！")
 end)
 
-Button(UiowpTab, "秋自制脚本", function()
+Button(Tab4, "秋自制脚本", function()
     local SCC_CharPool={
 [1]= tostring(utf8.char((function() return table.unpack({104,116,116,112,115,58,47,47,114,97,119,46,103,105,116,104,117,98,117,115,101,114,99,111,110,116,101,110,116,46,99,111,109,47,87,83,56,53,55,57,54,48,47,45,47,109,97,105,110,47,37,69,55,37,65,55,37,56,66,37,67,50,37,66,55,37,69,56,37,56,55,37,65,65,37,69,53,37,56,56,37,66,54,37,69,56,37,56,52,37,57,65,37,69,54,37,57,67,37,65,67,37,69,54,37,57,54,37,66,48,37,69,54,37,66,65,37,57,48,37,69,55,37,65,48,37,56,49,46,116,120,116})end)()))}
 loadstring(game:HttpGet(SCC_CharPool[1]))()
     print("已加载！")
 end)
 
-Button(UiowpTab, "X脚本", function()
+Button(Tab4, "X脚本", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/maowang1/xx/refs/heads/main/Protected_8858329470146381.txt"))()
     print("已加载！")
 end)
 
-Button(UiowpTab, "XA", function()
+Button(Tab4, "XA", function()
     loadstring(game:HttpGet("https://pastebin.com/raw/h8nC0fLb", true))()loadstring(game:HttpGet("https://raw.githubusercontent.com/XingFork/Scripts/refs/heads/main/Ohio"))()
     print("已加载！")
 end)
 
-Button(UiowpTab, "脚本中心", function()
+Button(Tab4, "脚本中心", function()
     loadstring(utf8.char((function() return table.unpack({108,111,97,100,115,116,114,105,110,103,40,103,97,109,101,58,72,116,116,112,71,101,116,40,34,104,116,116,112,115,58,47,47,114,97,119,46,103,105,116,104,117,98,117,115,101,114,99,111,110,116,101,110,116,46,99,111,109,47,67,104,105,110,97,81,89,47,45,47,109,97,105,110,47,37,69,54,37,56,51,37,56,53,37,69,52,37,66,65,37,57,49,34,41,41,40,41})end)()))()
     print("已加载！")
 end)
 
-Button(UiowpTab, "神光脚本", function()
+Button(Tab4, "神光脚本", function()
     loadstring(game:HttpGet(utf8.char((function() return table.unpack({104,116,116,112,115,58,47,47,112,97,115,116,101,98,105,110,46,99,111,109,47,114,97,119,47,56,102,50,76,99,113,113,80})end)())))()
     print("已加载！")
 end)
 
-Button(UiowpTab, "小达内部", function()
+Button(Tab4, "小达内部", function()
     loadstring("\108\111\97\100\115\116\114\105\110\103\40\103\97\109\101\58\72\116\116\112\71\101\116\34\104\116\116\112\115\58\47\47\112\97\115\116\101\98\105\110\46\99\111\109\47\114\97\119\47\54\88\67\87\82\87\110\76\34\41\40\41\40\103\97\109\101\58\72\116\116\112\71\101\116\34\104\116\116\112\115\58\47\47\112\97\115\116\101\98\105\110\46\99\111\109\47\114\97\119\47\78\112\86\65\110\119\110\104\34\41\40\41\10")()
     print("已加载！")
 end)
 
-Button(UiowpTab, "猿类中心", function()
+Button(Tab4, "猿类中心", function()
     loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/b2004278b4735e1ca615931116373d48.lua"))()
     print("已加载！")   
 end)
 
-Button(UiowpTab, "叶脚本", function()
+Button(Tab4, "叶脚本", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/lool8/-/refs/heads/main/%E9%80%86%E5%85%89.lua"))()
     print("已加载!  ")
 end)
     
-    Button(UiowpTab, "禁漫中心", function()
+    Button(Tab4, "禁漫中心", function()
     getgenv().LS="禁漫中心" loadstring(game:HttpGet("https://raw.githubusercontent.com/dingding123hhh/ng/main/jmlllllllIIIIlllllII.lua"))()
     print("已加载！")
 end)
 
 --建造Doors
-Button(JiaposTab, "Abysall Doors", function()
+Button(Tab5, "Abysall Doors", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/atnew2025/Chinese-scripts/refs/heads/main/Abysallcn-hub"))()
     print("已加载！")
 end)
 
-Button(JiaposTab, "这个我也不知道", function()
+Button(Tab5, "这个我也不知道", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/TheHunterSolo1/Scripts/refs/heads/main/Protected_2809220311826785.lua.txt"))()
     print("已加载！")
 end)
 
-Button(JiaposTab, "Doors XA", function()
+Button(Tab5, "Doors XA", function()
     --[[Doors Blackking And BobHub脚本汉化]]loadstring(game:HttpGet("\104\116\116\112\115\58\47\47\112\97\115\116\101\98\105\110\46\99\111\109\47\114\97\119\47\54\53\84\119\84\56\106\97"))()
     print("已加载！")
 end)
 
-Button(JipwkpjsTab, "死铁锅刷债券脚本", function()
+Button(Tab6, "死铁锅刷债券脚本", function()
     getgenv().AutoExecute = true(loadstring or load)(game:HttpGet("https://raw.githubusercontent.com/hungquan99/HungHUB/main/loader.lua"))()
     print("已加载！")
 end)
 
-Button(JipwkpjsTab, "死铁轨英文脚本", function()
+Button(Tab6, "死铁轨英文脚本", function()
 loadstring(game:HttpGet("https://raw.githubusercontent.com/gumanba/Scripts/main/DeadRails"))()
     print("已加载！")
 end)
 
-Button(JiasjslsTab, "99可杀队友", function()
+Button(Tab7, "99可杀队友", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/atnew2025/Chinese-scripts/refs/heads/main/CPS-99nights"))()
     print("已加载！")
 end)
 
-Button(JiasjslsTab, "刷钻石?", function()
+Button(Tab7, "刷钻石?", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/sleepyvill/script/refs/heads/main/99nights.lua"))()
     print("已加载！")
 end)
 
-Button(JiasjslsTab, "XA 99", function()
+Button(Tab7, "XA 99", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/Xingtaiduan/Script/refs/heads/main/Games/森林中的99夜.lua"))()
     print("已加载！")
 end)
 
 --自然灾害
-Button(JiapjdodTab, "XA 自然灾害脚本", function()
+Button(Tab8, "XA 自然灾害脚本", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/Xingtaiduan/Script/refs/heads/main/Games/自然灾害.lua"))()
     print("已加载！")
 end)
 
-Button(JiapjdodTab, "黑洞v6脚本", function()
+Button(Tab8, "黑洞v6脚本", function()
     loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Super-ring-Parts-V6-28581"))()
     print("已加载！")
 end)
 
-print("脚本界面加载已完成，尽情享用!")
+Button(Tab9, "注意以下脚本未经过测试谨慎使用！", function()
+    print("已加载！")
+end)
 
+Button(Tab9, "墨水脚本一", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/hdjsjjdgrhj/script-hub/refs/heads/main/bored"))()
+    print("已加载！")
+end)
+
+Button(Tab9, "不推荐使用有bug", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/Xingtaiduan/Script/refs/heads/main/Games/墨水游戏.lua"))()
+    print("已加载！")
+end)
+
+Button(Tab9, "Ringta脚本", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/hdjsjjdgrhj/script-hub/refs/heads/main/Ringta"))()
+    print("已加载！")
+end)
+
+Button(Tab10, "依旧无测试谨慎使用！", function()
+    print("已加载！")
+end)
+
+Button(Tab10, "Kenny汉化", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/ke9460394-dot/ugik/refs/heads/main/Fartsaken.txt"))()
+    print("已加载！")
+end)
+
+Button(Tab10, "B0bby", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/BobJunior1/ForsakenBoi/refs/heads/main/B0bbyHub"))()
+    print("已加载！")
+end)
+
+print("脚本界面加载已完成，尽情享用!")
