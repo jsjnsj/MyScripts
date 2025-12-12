@@ -63,21 +63,41 @@ local AuddkTab = Tab("被遗弃(不保证能进去)", "eye")
 local UiosjwlTab = Tab("复制", "moon")
 
 -- 公告页按钮
-Button(YioapTab, "赞助人:无", function()
-    print("赞助人:无")
-end)
+YioapTab:Paragraph({
+    Title = "作者：",
+    Desc = [[不想玩墨水]],
+    Image = "door-open",
+    ImageSize = 24,
+    Color = Color3.fromHex("#FFFFFF"),
+    BackgroundTransparency = 1,
+    OutlineColor = Color3.fromHex("#FFFFFF"),
+    OutlineThickness = 1,
+    Padding = UDim.new(0, 1)
+})
 
-Button(YioapTab, "目前还是测试版", function()
-    print("目前还是测试版")
-end)
+YioapTab:Paragraph({
+    Title = "赞助人：",
+    Desc = [[无]],
+    Image = "door-open",
+    ImageSize = 24,
+    Color = Color3.fromHex("#FFFFFF"),
+    BackgroundTransparency = 1,
+    OutlineColor = Color3.fromHex("#FFFFFF"),
+    OutlineThickness = 1,
+    Padding = UDim.new(0, 1)
+})
 
-Button(YioapTab, "2创的我操你妈，你妈没了", function()
-    print("2创的我操你妈，你妈没了")
-end)
-
-Button(YioapTab, "更新服务器", function()
-    print("更新服务器")
-end)
+YioapTab:Paragraph({
+    Title = "禁止二创",
+    Desc = [[敢二创的代价是浮木死了]],
+    Image = "door-open",
+    ImageSize = 24,
+    Color = Color3.fromHex("#FFFFFF"),
+    BackgroundTransparency = 1,
+    OutlineColor = Color3.fromHex("#FFFFFF"),
+    OutlineThickness = 1,
+    Padding = UDim.new(0, 1)
+})
 
 -- 玩家设置标签
 Slider(PlayerTab, "移动速度", 16, 200, 16, function(value)
