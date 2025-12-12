@@ -88,7 +88,7 @@ YioapTab:Paragraph({
 })
 
 YioapTab:Paragraph({
-    Title = "禁止二创",
+    Title = "禁止二创:",
     Desc = [[敢二创的代价是浮木死了]],
     Image = "door-open",
     ImageSize = 24,
