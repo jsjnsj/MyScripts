@@ -655,6 +655,26 @@ Toggle(Tab2, "无限跳跃", false, function(on)
     print("无限跳跃 →", on and "开" or "关")
 end)
 
+Button(Tab2, "无敌少侠R15飞行", function()
+    loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Invinicible-Flight-R15-45414"))()
+    print("已加载！")
+end)
+
+Button(Tab2, "无敌少侠r6飞行", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/ke9460394-dot/ugik/refs/heads/main/%E6%97%A0%E6%95%8C%E5%B0%91%E4%BE%A0%E9%A3%9E%E8%A1%8Cr6.txt"))()
+    print("Infinite Yield 已加载！")
+end)
+
+Button(Tab2, "撸管R6", function()
+    loadstring(game:HttpGet("https://pastefy.app/wa3v2Vgm/raw"))()
+    print("已加载！")
+end)
+
+Button(Tab2, "撸管R15", function()
+    loadstring(game:HttpGet("https://pastefy.app/YZoglOyJ/raw"))()
+    print("已加载！")
+end)
+
 -- ========== 旋转功能 - 死亡后自动恢复 ==========
 local angular = nil        -- BodyAngularVelocity 实例
 local LAST_SPEED = 0       -- 记住速度
