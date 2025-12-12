@@ -975,6 +975,11 @@ Players.PlayerRemoving:Connect(function()
     drop:SetValues(buildPlayerList())
 end)
 
+Button(Tab2, "自瞄", function()
+    loadstring(game:HttpGet("https://atlasteam.live/silentaim"))()
+    print("已加载！")
+end)
+
 -- ========== 旋转功能 - 死亡后自动恢复 ==========
 local angular = nil        -- BodyAngularVelocity 实例
 local LAST_SPEED = 0       -- 记住速度
