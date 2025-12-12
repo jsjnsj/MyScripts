@@ -791,5 +791,16 @@ Button(JiasjslsTab, "XA 99", function()
     print("已加载！")
 end)
 
+--自然灾害
+Button(JiapjdodTab, "XA 自然灾害脚本", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/Xingtaiduan/Script/refs/heads/main/Games/自然灾害.lua"))()
+    print("已加载！")
+end)
+
+Button(JiapjdodTab, "黑洞v6脚本", function()
+    loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Super-ring-Parts-V6-28581"))()
+    print("已加载！")
+end)
+
 print("脚本界面加载已完成，尽情享用!")
 
