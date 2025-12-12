@@ -100,7 +100,7 @@ Tab1:Paragraph({
 
 Tab1:Paragraph({
     Title = "更新:",
-    Desc = [[添加无敌少侠和撸管]],
+    Desc = [[添加了很多新功能]],
     Image = "door-open",
     ImageSize = 24,
     Color = Color3.fromHex("#FFFFFF"),
@@ -673,6 +673,306 @@ end)
 Button(Tab2, "撸管R15", function()
     loadstring(game:HttpGet("https://pastefy.app/YZoglOyJ/raw"))()
     print("已加载！")
+end)
+
+Button(Tab2, "悬空", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/GhostPlayer352/Test4/main/Float"))()
+    print("已加载！")
+end)
+
+Button(Tab2, "上天堂", function()
+     loadstring(game:HttpGet("https://pastefy.app/xV1T3PAi/raw"))()
+    print("已加载！")
+end)
+
+Button(Tab2, "帅飞所有人", function()
+    loadstring(game:HttpGet("https://pastebin.com/raw/zqyDSUWX"))()
+    print("已加载！")
+end)
+
+Button(Tab2, "管理员", function()
+      loadstring(game:HttpGet("https://pastebin.com/raw/sZpgTVas"))()
+    print("已加载！")
+end)
+
+local Players = game:GetService("Players")
+local localPlayer = Players.LocalPlayer
+
+local function ThrowSinglePlayer(targetPlayer)
+    local targetNames = { targetPlayer.Name }
+    local isAllOrOthers = false
+
+    -- 以下 = 你之前给的完整甩飞逻辑（从 FindPlayerByName 到结尾循环）
+    local function FindPlayerByName(name)
+        name = name:lower()
+        if name == "all" or name == "others" then
+            isAllOrOthers = true
+            return
+        end
+        if name == "random" then
+            local allPlayers = Players:GetPlayers()
+            if table.find(allPlayers, localPlayer) then
+                table.remove(allPlayers, table.find(allPlayers, localPlayer))
+            end
+            return allPlayers[math.random(#allPlayers)]
+        end
+        if name ~= "random" and name ~= "all" and name ~= "others" then
+            for _, player in ipairs(Players:GetPlayers()) do
+                if player ~= localPlayer then
+                    if player.Name:lower():match("^" .. name) then
+                        return player
+                    end
+                    if player.DisplayName:lower():match("^" .. name) then
+                        return player
+                    end
+                end
+            end
+        end
+    end
+
+    local function SendNotification(title, text, duration)
+        game:GetService("StarterGui"):SetCore("SendNotification", {
+            Title = title, Text = text, Duration = duration,
+        })
+    end
+
+    local function ThrowPlayer(targetPlayer)
+        local localCharacter = localPlayer.Character
+        local localHumanoid = localCharacter and localCharacter:FindFirstChildOfClass("Humanoid")
+        local localRootPart = localHumanoid and localHumanoid.RootPart
+        local targetCharacter = targetPlayer.Character
+        local targetHumanoid = nil
+        local targetRootPart = nil
+        local targetHead = nil
+        local targetAccessory = nil
+        local accessoryHandle = nil
+
+        if targetCharacter:FindFirstChildOfClass("Humanoid") then
+            targetHumanoid = targetCharacter:FindFirstChildOfClass("Humanoid")
+        end
+        if targetHumanoid and targetHumanoid.RootPart then
+            targetRootPart = targetHumanoid.RootPart
+        end
+        if targetCharacter:FindFirstChild("Head") then
+            targetHead = targetCharacter.Head
+        end
+        if targetCharacter:FindFirstChildOfClass("Accessory") then
+            targetAccessory = targetCharacter:FindFirstChildOfClass("Accessory")
+        end
+        if targetAccessory and targetAccessory:FindFirstChild("Handle") then
+            accessoryHandle = targetAccessory.Handle
+        end
+
+        if localCharacter and localHumanoid and localRootPart then
+            if localRootPart.Velocity.Magnitude < 50 then
+                getgenv().OldPos = localRootPart.CFrame
+            end
+            if targetHumanoid and targetHumanoid.Sit and not isAllOrOthers then
+                return SendNotification("玩家消失", "已停止", 5)
+            end
+            if targetHead then
+                workspace.CurrentCamera.CameraSubject = targetHead
+            elseif not targetHead and accessoryHandle then
+                workspace.CurrentCamera.CameraSubject = accessoryHandle
+            elseif targetHumanoid and targetRootPart then
+                workspace.CurrentCamera.CameraSubject = targetHumanoid
+            end
+            if not targetCharacter:FindFirstChildWhichIsA("BasePart") then
+                return
+            end
+
+            local function ApplyThrowForce(part, offset, rotation)
+                localRootPart.CFrame = CFrame.new(part.Position) * offset * rotation
+                localCharacter:SetPrimaryPartCFrame(CFrame.new(part.Position) * offset * rotation)
+                localRootPart.Velocity = Vector3.new(9e7, 9e8, 9e7)
+                localRootPart.RotVelocity = Vector3.new(9e8, 9e8, 9e8)
+            end
+
+            local function PerformThrowAnimation(part)
+                local timeoutDuration = 2
+                local startTime = tick()
+                local rotationAngle = 0
+                while localRootPart do
+                    local velocityMagnitude = part.Velocity.Magnitude
+                    if velocityMagnitude < 50 then
+                        rotationAngle = rotationAngle + 100
+                        ApplyThrowForce(part, CFrame.new(0, 1.5, 0) + targetHumanoid.MoveDirection * part.Velocity.Magnitude / 1.25, CFrame.Angles(math.rad(rotationAngle), 0, 0))
+                        task.wait()
+                        ApplyThrowForce(part, CFrame.new(0, -1.5, 0) + targetHumanoid.MoveDirection * part.Velocity.Magnitude / 1.25, CFrame.Angles(math.rad(rotationAngle), 0, 0))
+                        task.wait()
+                        ApplyThrowForce(part, CFrame.new(2.25, 1.5, -2.25) + targetHumanoid.MoveDirection * part.Velocity.Magnitude / 1.25, CFrame.Angles(math.rad(rotationAngle), 0, 0))
+                        task.wait()
+                        ApplyThrowForce(part, CFrame.new(-2.25, -1.5, 2.25) + targetHumanoid.MoveDirection * part.Velocity.Magnitude / 1.25, CFrame.Angles(math.rad(rotationAngle), 0, 0))
+                        task.wait()
+                        ApplyThrowForce(part, CFrame.new(0, 1.5, 0) + targetHumanoid.MoveDirection, CFrame.Angles(math.rad(rotationAngle), 0, 0))
+                        task.wait()
+                        ApplyThrowForce(part, CFrame.new(0, -1.5, 0) + targetHumanoid.MoveDirection, CFrame.Angles(math.rad(rotationAngle), 0, 0))
+                        task.wait()
+                        ApplyThrowForce(part, CFrame.new(0, 1.5, targetHumanoid.WalkSpeed), CFrame.Angles(math.rad(90), 0, 0))
+                        task.wait()
+                        ApplyThrowForce(part, CFrame.new(0, -1.5, -targetHumanoid.WalkSpeed), CFrame.Angles(0, 0, 0))
+                        task.wait()
+                        ApplyThrowForce(part, CFrame.new(0, 1.5, targetHumanoid.WalkSpeed), CFrame.Angles(math.rad(90), 0, 0))
+                        task.wait()
+                        ApplyThrowForce(part, CFrame.new(0, 1.5, targetRootPart.Velocity.Magnitude / 1.25), CFrame.Angles(math.rad(90), 0, 0))
+                        task.wait()
+                        ApplyThrowForce(part, CFrame.new(0, -1.5, -targetRootPart.Velocity.Magnitude / 1.25), CFrame.Angles(0, 0, 0))
+                        task.wait()
+                        ApplyThrowForce(part, CFrame.new(0, 1.5, targetRootPart.Velocity.Magnitude / 1.25), CFrame.Angles(math.rad(90), 0, 0))
+                        task.wait()
+                        ApplyThrowForce(part, CFrame.new(0, -1.5, 0), CFrame.Angles(math.rad(90), 0, 0))
+                        task.wait()
+                        ApplyThrowForce(part, CFrame.new(0, -1.5, 0), CFrame.Angles(0, 0, 0))
+                        task.wait()
+                        ApplyThrowForce(part, CFrame.new(0, -1.5, 0), CFrame.Angles(math.rad(-90), 0, 0))
+                        task.wait()
+                        ApplyThrowForce(part, CFrame.new(0, -1.5, 0), CFrame.Angles(0, 0, 0))
+                        task.wait()
+                        ApplyThrowForce(part, CFrame.new(0, -1.5, 0), CFrame.Angles(math.rad(-90), 0, 0))
+                        task.wait()
+                    else
+                        ApplyThrowForce(part, CFrame.new(0, 1.5, targetHumanoid.WalkSpeed), CFrame.Angles(math.rad(90), 0, 0))
+                        task.wait()
+                        ApplyThrowForce(part, CFrame.new(0, -1.5, -targetHumanoid.WalkSpeed), CFrame.Angles(0, 0, 0))
+                        task.wait()
+                        ApplyThrowForce(part, CFrame.new(0, 1.5, targetHumanoid.WalkSpeed), CFrame.Angles(math.rad(90), 0, 0))
+                        task.wait()
+                        ApplyThrowForce(part, CFrame.new(0, 1.5, targetRootPart.Velocity.Magnitude / 1.25), CFrame.Angles(math.rad(90), 0, 0))
+                        task.wait()
+                        ApplyThrowForce(part, CFrame.new(0, -1.5, -targetRootPart.Velocity.Magnitude / 1.25), CFrame.Angles(0, 0, 0))
+                        task.wait()
+                        ApplyThrowForce(part, CFrame.new(0, 1.5, targetRootPart.Velocity.Magnitude / 1.25), CFrame.Angles(math.rad(90), 0, 0))
+                        task.wait()
+                        ApplyThrowForce(part, CFrame.new(0, -1.5, 0), CFrame.Angles(math.rad(90), 0, 0))
+                        task.wait()
+                        ApplyThrowForce(part, CFrame.new(0, -1.5, 0), CFrame.Angles(0, 0, 0))
+                        task.wait()
+                        ApplyThrowForce(part, CFrame.new(0, -1.5, 0), CFrame.Angles(math.rad(-90), 0, 0))
+                        task.wait()
+                        ApplyThrowForce(part, CFrame.new(0, -1.5, 0), CFrame.Angles(0, 0, 0))
+                        task.wait()
+                        ApplyThrowForce(part, CFrame.new(0, -1.5, 0), CFrame.Angles(math.rad(-90), 0, 0))
+                        task.wait()
+                    end
+                    velocityMagnitude = part.Velocity.Magnitude
+                    if velocityMagnitude <= 500 then
+                        local partParent = part.Parent
+                        if partParent == targetPlayer.Character then
+                            partParent = targetPlayer.Parent
+                            if partParent == Players then
+                                local hasCharacter = not targetPlayer.Character
+                                if hasCharacter ~= targetCharacter then
+                                    local isSitting = targetHumanoid.Sit
+                                    if not isSitting then
+                                        local health = localHumanoid.Health
+                                        if health > 0 then
+                                            local currentTime = tick()
+                                            if startTime + timeoutDuration < currentTime then
+                                                break
+                                            end
+                                        else
+                                            break
+                                        end
+                                    else
+                                        break
+                                    end
+                                else
+                                    break
+                                end
+                            else
+                                break
+                            end
+                        else
+                            break
+                        end
+                    else
+                        break
+                    end
+                end
+            end
+
+            -- 结尾大甩 + 回位
+            workspace.FallenPartsDestroyHeight = 0 / 0
+            local bodyVelocity = Instance.new("BodyVelocity")
+            bodyVelocity.Name = "EpixVel"
+            bodyVelocity.Parent = localRootPart
+            bodyVelocity.Velocity = Vector3.new(9e8, 9e8, 9e8)
+            bodyVelocity.MaxForce = Vector3.new(1 / 0, 1 / 0, 1 / 0)
+            localHumanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, false)
+            if targetRootPart and targetHead then
+                if (targetRootPart.CFrame.p - targetHead.CFrame.p).Magnitude > 5 then
+                    PerformThrowAnimation(targetHead)
+                else
+                    PerformThrowAnimation(targetRootPart)
+                end
+            elseif targetRootPart and not targetHead then
+                PerformThrowAnimation(targetRootPart)
+            elseif not targetRootPart and targetHead then
+                PerformThrowAnimation(targetHead)
+            elseif not targetRootPart and not targetHead and targetAccessory and accessoryHandle then
+                PerformThrowAnimation(accessoryHandle)
+            else
+                return SendNotification("xhk缝合脚本", "开/关", 5)
+            end
+            bodyVelocity:Destroy()
+            localHumanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, true)
+            workspace.CurrentCamera.CameraSubject = localHumanoid
+            repeat
+                localRootPart.CFrame = getgenv().OldPos * CFrame.new(0, 0.5, 0)
+                localCharacter:SetPrimaryPartCFrame(getgenv().OldPos * CFrame.new(0, 0.5, 0))
+                localHumanoid:ChangeState("GettingUp")
+                for _, child in ipairs(localCharacter:GetChildren()) do
+                    if child:IsA("BasePart") then
+                        child.Velocity = Vector3.new()
+                        child.RotVelocity = Vector3.new()
+                    end
+                end
+                task.wait()
+            until (localRootPart.Position - getgenv().OldPos.p).Magnitude < 25
+            workspace.FallenPartsDestroyHeight = getgenv().FPDH or -500
+        end
+    end
+
+    -- 执行甩飞（只甩这 1 个人）
+    for _, name in ipairs(targetNames) do
+        local found = FindPlayerByName(name)
+        if found and found ~= localPlayer then
+            ThrowPlayer(found)
+        end
+    end
+end
+-- ============================================================================
+
+-- 生成玩家列表（不含自己）
+local function buildPlayerList()
+    local t = {}
+    for _, p in ipairs(Players:GetPlayers()) do
+        if p ~= localPlayer then
+            table.insert(t, p.Name)
+        end
+    end
+    return t
+end
+
+-- >>> WindUI Dropdown：子按钮 = 所有玩家名
+local drop = Tab2:Dropdown({
+    Title   = "选择甩飞玩家",
+    Values  = buildPlayerList(),
+    Value   = nil,
+    Callback = function(selected)
+        local target = Players:FindFirstChild(selected)
+        if target then
+            ThrowSinglePlayer(target)
+        end
+    end
+})
+
+-- 玩家进出自动刷新列表
+Players.PlayerAdded:Connect(function()
+    drop:SetValues(buildPlayerList())
+end)
+Players.PlayerRemoving:Connect(function()
+    drop:SetValues(buildPlayerList())
 end)
 
 -- ========== 旋转功能 - 死亡后自动恢复 ==========
