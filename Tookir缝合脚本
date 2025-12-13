@@ -1,7 +1,7 @@
 local WindUI = loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/releases/latest/download/main.lua"))()
 
 local Window = WindUI:CreateWindow({
-    Title = "xhk缝合脚本",
+    Title = "Tookir缝合脚本",
     Icon = "door-open",
     Author = "作者:不想玩墨水",
     Folder = "CloudHub",
@@ -18,7 +18,7 @@ local Window = WindUI:CreateWindow({
 })
 
 Window:EditOpenButton({
-    Title = "打开xhk缝合脚本",
+    Title = "打开Tookir缝合脚本",
     Icon = "monitor",
     CornerRadius = UDim.new(0,16),
     StrokeThickness = 2,
@@ -100,7 +100,19 @@ Tab1:Paragraph({
 
 Tab1:Paragraph({
     Title = "更新:",
-    Desc = [[添加了很多新功能]],
+    Desc = [[改名了]],
+    Image = "door-open",
+    ImageSize = 24,
+    Color = Color3.fromHex("#FFFFFF"),
+    BackgroundTransparency = 1,
+    OutlineColor = Color3.fromHex("#FFFFFF"),
+    OutlineThickness = 1,
+    Padding = UDim.new(0, 1)
+})
+
+Tab1:Paragraph({
+    Title = "@",
+    Desc = [[司空]],
     Image = "door-open",
     ImageSize = 24,
     Color = Color3.fromHex("#FFFFFF"),
