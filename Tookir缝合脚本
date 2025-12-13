@@ -170,7 +170,7 @@ Tab1:Paragraph({
 
 Tab1:Paragraph({
     Title = "更新:",
-    Desc = [[更新了新的几个服务器]],
+    Desc = [[更新了新的几个服务器,并增加上帝模式]],
     Image = "door-open",
     ImageSize = 24,
     Color = Color3.fromHex("#FFFFFF"),
@@ -178,6 +178,14 @@ Tab1:Paragraph({
     OutlineColor = Color3.fromHex("#FFFFFF"),
     OutlineThickness = 1,
     Padding = UDim.new(0, 1)
+})
+
+Tab1:Button({
+    Title = "作者QQ",
+    Callback = function()
+        setclipboard("2136024871")
+        print("复制成功")
+    end
 })
 
 -- 玩家设置标签
@@ -1048,6 +1056,26 @@ end)
 Button(Tab2, "自瞄", function()
     loadstring(game:HttpGet("https://atlasteam.live/silentaim"))()
     print("已加载！")
+end)
+
+Button(Tab2, "上帝模式", function()
+    local player = game.Players.LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait()
+    
+    if character then
+        local humanoid = character:FindFirstChildOfClass("Humanoid")
+        if humanoid then
+            humanoid.MaxHealth = math.huge
+            humanoid.Health = math.huge
+            
+            -- 防止受伤
+            humanoid.HealthChanged:Connect(function()
+                humanoid.Health = math.huge
+            end)
+            
+            print("上帝模式已开启！")
+        end
+    end
 end)
 
 -- ========== 旋转功能 - 死亡后自动恢复 ==========
