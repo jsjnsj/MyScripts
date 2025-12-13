@@ -170,7 +170,7 @@ Tab1:Paragraph({
 
 Tab1:Paragraph({
     Title = "更新:",
-    Desc = [[更新了新的几个服务器,并增加上帝模式]],
+    Desc = [[多了一些新的功能，在通用里,作者准备把它改成检测服务器,但目前还没改]],
     Image = "door-open",
     ImageSize = 24,
     Color = Color3.fromHex("#FFFFFF"),
@@ -1053,9 +1053,63 @@ Players.PlayerRemoving:Connect(function()
     drop:SetValues(buildPlayerList())
 end)
 
-Button(Tab2, "自瞄", function()
-    loadstring(game:HttpGet("https://atlasteam.live/silentaim"))()
-    print("已加载！")
+Toggle(Tab2, "自瞄(但是新的)", false, function(on)
+    local rs = game:GetService("RunService")
+    local ps = game:GetService("Players")
+    local lp = ps.LocalPlayer
+    local cam = workspace.CurrentCamera
+
+    local params = RaycastParams.new()
+    params.FilterDescendantsInstances = {lp.Character}
+    params.FilterType = Enum.RaycastFilterType.Blacklist
+
+    -- 清理旧连接
+    if getgenv().softAim then
+        getgenv().softAim:Disconnect()
+        getgenv().softAim = nil
+    end
+
+    if on then
+        getgenv().softAim = rs.RenderStepped:Connect(function()
+            local base = cam.CFrame
+            local pos  = base.Position
+            local look = base.LookVector
+
+            local bestHead = nil
+            local bestDot  = math.cos(math.rad(25))   -- 25°阈值
+            local aimPoint = nil
+
+            for _,p in ipairs(ps:GetPlayers()) do
+                if p~=lp and p.Character then
+                    local head = p.Character:FindFirstChild("Head")
+                    if head then
+                        local vec = head.Position - pos
+                        local dst = vec.Magnitude
+                        if dst <= 60 then
+                            local dir = vec.Unit
+                            local dot = look:Dot(dir)
+                            if dot > bestDot then
+                                local hit = workspace:Raycast(pos, dir*dst, params)
+                                if not hit or hit.Instance:IsDescendantOf(p.Character) then
+                                    bestDot  = dot
+                                    bestHead = head
+                                    aimPoint = head.Position + Vector3.new(0,.6,0)
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+
+            if bestHead and aimPoint then
+                local newLook = (aimPoint - pos).Unit
+                cam.CFrame = CFrame.lookAt(pos, pos + cam.CFrame.LookVector:Lerp(newLook, 0.15))
+            end
+        end)
+        print("自瞄已开启")
+    else
+        print("自瞄已关闭")
+    end
 end)
 
 Button(Tab2, "上帝模式", function()
@@ -1076,6 +1130,21 @@ Button(Tab2, "上帝模式", function()
             print("上帝模式已开启！")
         end
     end
+end)
+
+Button(Tab2, "透视", function()
+    loadstring(game:HttpGet("https://pastefy.app/LE2hzECZ/raw"))()
+    print("已加载！")
+end)
+
+Button(Tab2, "工具包", function()
+    loadstring(game:HttpGet("https://cdn.wearedevs.net/scripts/BTools.txt"))()
+    print("已加载！")
+end)
+
+Button(Tab2, "Dex", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/renlua/Script-Tutorial/refs/heads/main/dex.lua"))()
+    print("已加载！")
 end)
 
 -- ========== 旋转功能 - 死亡后自动恢复 ==========
@@ -1115,6 +1184,7 @@ lp.CharacterAdded:Connect(function(char)
     if LAST_SPEED ~= 0 then setSpin(LAST_SPEED) end
 end)
 
+--其他脚本
 Button(Tab4, "XC", function()
     loadstring(game:HttpGet("https://pastebin.com/raw/gemxHwA1"))()
     print("已加载！")
