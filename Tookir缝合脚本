@@ -130,6 +130,12 @@ local Tab12 = Tab("活了七天", "eye")
 local Tab13 = Tab("彩虹朋友", "eye")
 local Tab14 = Tab("种植花园", "eye")
 local Tab15 = Tab("河北唐县", "eye")
+local Tab16 = Tab("伐木大厅", "eye")
+local Tab17 = Tab("力量传奇", "eye")
+local Tab18 = Tab("速度传奇", "eye")
+local Tab19 = Tab("忍者传奇", "eye")
+local Tab20 = Tab("Chain", "eye")
+local Tab21 = Tab("俄亥俄州", "eye")
 
 -- 公告页按钮
 Tab1:Paragraph({
@@ -170,7 +176,7 @@ Tab1:Paragraph({
 
 Tab1:Paragraph({
     Title = "更新:",
-    Desc = [[多了一些新的功能，在通用里,作者准备把它改成检测服务器,但目前还没改]],
+    Desc = [[添加了好多服务器本人要不行了,拿到此脚本，可以为此脚本做个宣传吗，]],
     Image = "door-open",
     ImageSize = 24,
     Color = Color3.fromHex("#FFFFFF"),
@@ -1308,55 +1314,49 @@ end)
 
 Button(Tab9, "注意以下脚本未经过测试谨慎使用！", function()
     print("已加载！")
+                        local dst = vec.Magnitude
+                        if dst <= 60 then
+                            local dir = vec.Unit
+                            local dot = look:Dot(dir)
+                            if dot > bestDot then
+                                local hit = workspace:Raycast(pos, dir*dst, params)
+                                if not hit or hit.Instance:IsDescendantOf(p.Character) then
+                                    bestDot  = dot
+                                    bestHead = head
+                                    aimPoint = head.Position + Vector3.new(0,.6,0)
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+
+            if bestHead and aimPoint then
+                local newLook = (aimPoint - pos).Unit
+                cam.CFrame = CFrame.lookAt(pos, pos + cam.CFrame.LookVector:Lerp(newLook, 0.15))
+            end
+        end)
+        print("自瞄已开启")
+    else
+        print("自瞄已关闭")
+    end
 end)
 
-Button(Tab9, "墨水脚本一", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/hdjsjjdgrhj/script-hub/refs/heads/main/bored"))()
+Button(Tab2, "上帝模式", function()
+    local player = game.Players.LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait()
+    
+    if character then
+        local humanoid = character:FindFirstChildOfClass("Humanoid")
+        if humanoid then
+            humano1\40\41\10")()
     print("已加载！")
 end)
 
-Button(Tab9, "不推荐使用有bug", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/Xingtaiduan/Script/refs/heads/main/Games/墨水游戏.lua"))()
-    print("已加载！")
-end)
-
-Button(Tab9, "Ringta脚本", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/hdjsjjdgrhj/script-hub/refs/heads/main/Ringta"))()
-    print("已加载！")
-end)
-
-Button(Tab10, "依旧无测试谨慎使用！", function()
-    print("已加载！")
-end)
-
-Button(Tab10, "Kenny汉化", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/ke9460394-dot/ugik/refs/heads/main/Fartsaken.txt"))()
-    print("已加载！")
-end)
-
-Button(Tab10, "B0bby", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/BobJunior1/ForsakenBoi/refs/heads/main/B0bbyHub"))()
-    print("已加载！")
-end)
-
-Button(Tab11, "亡命速递脚本1", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/gumanba/Scripts/main/DeadlyDelivery"))()
-    print("已加载！")
-end)
-
-Button(Tab12, "活了七天lgnahK汉化", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/ke9460394-dot/ugik/refs/heads/main/bf.txt"))()
-    print("已加载！")
-end)
-
-Button(Tab13, "彩虹朋友脚本1", function()
-    loadstring(game:HttpGet("https://rawscripts.net/raw/Rainbow-Friends-Best-2-Cheat-Iliankytn-42037"))()
-    print("已加载！")
-end)
-
-Button(Tab14, "种植花园脚本", function()
+Button(Tab4, "猿类中心", function()
+    loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/btton(Tab14, "种植花园脚本", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/MoziIOnTop/MoziIHub/refs/heads/main/GrowaGarden"))()
-    print("已加载！")
+
 end)
 
 Button(Tab14, "油管搬运", function()
@@ -1367,7 +1367,47 @@ end)
 Button(Tab15, "河北唐县脚本", function()
     fuckyou = "泷"
 create = "moon star"
-loadstring(game:HttpGet("https://raw.githubusercontent.com/xiaoyi-boop/tangxian/refs/heads/main/%E6%B2%B3%E5%8C%97%E5%94%90%E5%8E%BF%E5%8D%A1%E8%BD%A6%E5%88%B7%E9%92%B1%E8%84%9A%E6%9C%AC.lua",true))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/xiaoyi-boop/tangxian/refs/heads/main/%E6%B2%B3%E5%8C%97%E5%94%90%E5%8E%BF%E5%8D%A1%E8%BD%A6%E5%88%B7%E9%92%B1%E8%84%9A%E6%9C%AC.lua",true)(()
+    print("已加载！")
+end)
+
+Button(Tab16, "伐木大厅LuaWare汉化", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/XiaoYunCN/UWU/main/LuaWare.lua", true))()
+    print("已加载！")
+end)
+
+Button(Tab16, "伐木大厅金钱生成", function()
+    loadstring(game:HttpGet("https://pastebin.com/raw/p9mEnV28"))()
+    print("已加载！")
+end)
+
+Button(Tab17, "力量传奇一", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/rndmq/Serverlist/refs/heads/main/Loader"))()
+    print("已加载！")
+end)
+
+Button(Tab18, "速度传奇一", function()
+    loadstring(game:HttpGet("https://relzhub.farrghii.com/loader.lua"))()
+    print("已加载！")
+end)
+
+Button(Tab19, "忍者传奇", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/XRoLLu/UWU/main/Ninja-Legenos.exe.lua"))()
+    print("已加载！")
+end)
+
+Button(Tab20, "Chain", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/hdjsjjdgrhj/script-hub/refs/heads/main/caid%20cn"))()
+    print("已加载！")
+end)
+
+Button(Tab21, "俄亥俄州自动工作", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/LOLking123456/ohio/main/Roblox232"))()
+    print("已加载！")
+end)
+
+Button(Tab21, "俄亥俄州2", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/Alan0947383/Demonic-HUB-V2/main/S-C-R-I-P-T.lua",true))()
     print("已加载！")
 end)
 
