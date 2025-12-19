@@ -1,4 +1,6 @@
-local WindUI = loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/releases/latest/download/main.lua"))()
+local src = game:HttpGet("https://raw.githubusercontent.com/jsjnsj/MyScripts/refs/heads/main/Tookir缝合脚本")
+print("源码长度：", #src / 1451 / 1451, "MB")
+loadstring(src)()
 
 -- 创建简单的时间显示，放在不干扰UI的位置
 local screenGui = Instance.new("ScreenGui")
@@ -115,6 +117,7 @@ function Dropdown(a, b, c, d, e)
     return a:Dropdown({Title = b, Values = c, Value = d, Callback = e})
 end
 
+-- 创建所有标签页
 local Tab1 = Tab("公告", "door-open")
 local Tab2 = Tab("通用", "user")
 local Tab3 = Tab("旋转", "star")
@@ -176,7 +179,7 @@ Tab1:Paragraph({
 
 Tab1:Paragraph({
     Title = "更新:",
-    Desc = [[添加了好多服务器本人要不行了,拿到此脚本，可以为此脚本做个宣传吗，]],
+    Desc = [[添加了好多服务器本人要不行了,拿到此脚本，可以为此脚本做个宣传吗]],
     Image = "door-open",
     ImageSize = 24,
     Color = Color3.fromHex("#FFFFFF"),
@@ -786,7 +789,6 @@ local function ThrowSinglePlayer(targetPlayer)
     local targetNames = { targetPlayer.Name }
     local isAllOrOthers = false
 
-    -- 以下 = 你之前给的完整甩飞逻辑（从 FindPlayerByName 到结尾循环）
     local function FindPlayerByName(name)
         name = name:lower()
         if name == "all" or name == "others" then
@@ -1059,63 +1061,60 @@ Players.PlayerRemoving:Connect(function()
     drop:SetValues(buildPlayerList())
 end)
 
-Toggle(Tab2, "自瞄(但是新的)", false, function(on)
-    local rs = game:GetService("RunService")
-    local ps = game:GetService("Players")
-    local lp = ps.LocalPlayer
-    local cam = workspace.CurrentCamera
-
-    local params = RaycastParams.new()
-    params.FilterDescendantsInstances = {lp.Character}
-    params.FilterType = Enum.RaycastFilterType.Blacklist
-
+Toggle(Tab2, "自瞄（更新）", false, function(on)
     -- 清理旧连接
-    if getgenv().softAim then
-        getgenv().softAim:Disconnect()
-        getgenv().softAim = nil
+    if _G.aimLoop then
+        _G.aimLoop:Disconnect()
+        _G.aimLoop = nil
     end
+    if not on then return end   -- 关开关直接停
 
-    if on then
-        getgenv().softAim = rs.RenderStepped:Connect(function()
-            local base = cam.CFrame
-            local pos  = base.Position
-            local look = base.LookVector
+    local cam = workspace.CurrentCamera
+    local lp  = game:GetService("Players").LocalPlayer
+    local rs  = game:GetService("RunService")
+    local UserInputService = game:GetService("UserInputService")
 
-            local bestHead = nil
-            local bestDot  = math.cos(math.rad(25))   -- 25°阈值
-            local aimPoint = nil
+    local SMOOTH = 0.08
+    local OFFSET = Vector3.new(0, 0.2, 0)
 
-            for _,p in ipairs(ps:GetPlayers()) do
-                if p~=lp and p.Character then
-                    local head = p.Character:FindFirstChild("Head")
-                    if head then
-                        local vec = head.Position - pos
-                        local dst = vec.Magnitude
-                        if dst <= 60 then
-                            local dir = vec.Unit
-                            local dot = look:Dot(dir)
-                            if dot > bestDot then
-                                local hit = workspace:Raycast(pos, dir*dst, params)
-                                if not hit or hit.Instance:IsDescendantOf(p.Character) then
-                                    bestDot  = dot
-                                    bestHead = head
-                                    aimPoint = head.Position + Vector3.new(0,.6,0)
-                                end
-                            end
-                        end
+    -- 取最近且可见的玩家头部
+    local function getTarget()
+        local tgt, minDot = nil, -math.huge
+        for _, p in ipairs(game:GetService("Players"):GetPlayers()) do
+            if p ~= lp and p.Character and p.Character:FindFirstChild("Head") then
+                local head = p.Character.Head
+                local dir = (head.Position - cam.CFrame.Position).Unit
+                local dot = cam.CFrame.LookVector:Dot(dir)
+                if dot > minDot then
+                    local rayParams = RaycastParams.new()
+                    rayParams.FilterDescendantsInstances = {lp.Character}
+                    rayParams.FilterType = Enum.RaycastFilterType.Blacklist
+                    local offset = 0
+                    local result
+                    repeat
+                        result = workspace:Raycast(cam.CFrame.Position, dir * 5000 + Vector3.new(0, offset, 0), rayParams)
+                        offset = offset + 2
+                    until not result or result.Instance == head or offset > 10
+                    if result and result.Instance == head then
+                        tgt = head
+                        minDot = dot
                     end
                 end
             end
-
-            if bestHead and aimPoint then
-                local newLook = (aimPoint - pos).Unit
-                cam.CFrame = CFrame.lookAt(pos, pos + cam.CFrame.LookVector:Lerp(newLook, 0.15))
-            end
-        end)
-        print("自瞄已开启")
-    else
-        print("自瞄已关闭")
+        end
+        return tgt
     end
+
+    -- 主循环：随时都在锁（不需要按鼠标）
+    _G.aimLoop = rs.RenderStepped:Connect(function()
+        local t = getTarget()
+        if t then
+            local goalCF = CFrame.lookAt(cam.CFrame.Position, t.Position + OFFSET)
+            cam.CFrame = cam.CFrame:Lerp(goalCF, SMOOTH)
+        end
+    end)
+
+    Toast("全图自瞄已开启（无距）", "success")
 end)
 
 Button(Tab2, "上帝模式", function()
@@ -1190,7 +1189,6 @@ lp.CharacterAdded:Connect(function(char)
     if LAST_SPEED ~= 0 then setSpin(LAST_SPEED) end
 end)
 
---其他脚本
 Button(Tab4, "XC", function()
     loadstring(game:HttpGet("https://pastebin.com/raw/gemxHwA1"))()
     print("已加载！")
@@ -1251,12 +1249,52 @@ Button(Tab4, "猿类中心", function()
 end)
 
 Button(Tab4, "叶脚本", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/lool8/-/refs/heads/main/%E9%80%86%E5%85%89.lua"))()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/roblox-ye/QQ515966991/refs/heads/main/ROBLOX-CNVIP-XIAOYE.lua"))()
     print("已加载!  ")
 end)
     
     Button(Tab4, "禁漫中心", function()
     getgenv().LS="禁漫中心" loadstring(game:HttpGet("https://raw.githubusercontent.com/dingding123hhh/ng/main/jmlllllllIIIIlllllII.lua"))()
+    print("已加载！")
+end)
+
+Tab4:Paragraph({
+    Title = "没了",
+    Desc = [[真没了，别往下滑了]],
+    Image = "door-open",
+    ImageSize = 24,
+    Color = Color3.fromHex("#FFFFFF"),
+    BackgroundTransparency = 1,
+    OutlineColor = Color3.fromHex("#FFFFFF"),
+    OutlineThickness = 1,
+    Padding = UDim.new(0, 1)
+})
+
+Tab4:Paragraph({
+    Title = "没了",
+    Desc = [[真没了，别往下滑了]],
+    Image = "door-open",
+    ImageSize = 24,
+    Color = Color3.fromHex("#FFFFFF"),
+    BackgroundTransparency = 1,
+    OutlineColor = Color3.fromHex("#FFFFFF"),
+    OutlineThickness = 1,
+    Padding = UDim.new(0, 1)
+})
+Tab4:Paragraph({
+    Title = "没了",
+    Desc = [[真没了，别往下滑了]],
+    Image = "door-open",
+    ImageSize = 24,
+    Color = Color3.fromHex("#FFFFFF"),
+    BackgroundTransparency = 1,
+    OutlineColor = Color3.fromHex("#FFFFFF"),
+    OutlineThickness = 1,
+    Padding = UDim.new(0, 1)
+})
+
+Button(Tab4, "好吧，你发现了彩蛋点击执行", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/jsjnsj/my-roblox-scripts/refs/heads/main/xhknfjnknn.%E8%87%AA%E5%88%B6%E8%84%9A%E6%9C%AC"))()
     print("已加载！")
 end)
 
@@ -1314,49 +1352,55 @@ end)
 
 Button(Tab9, "注意以下脚本未经过测试谨慎使用！", function()
     print("已加载！")
-                        local dst = vec.Magnitude
-                        if dst <= 60 then
-                            local dir = vec.Unit
-                            local dot = look:Dot(dir)
-                            if dot > bestDot then
-                                local hit = workspace:Raycast(pos, dir*dst, params)
-                                if not hit or hit.Instance:IsDescendantOf(p.Character) then
-                                    bestDot  = dot
-                                    bestHead = head
-                                    aimPoint = head.Position + Vector3.new(0,.6,0)
-                                end
-                            end
-                        end
-                    end
-                end
-            end
-
-            if bestHead and aimPoint then
-                local newLook = (aimPoint - pos).Unit
-                cam.CFrame = CFrame.lookAt(pos, pos + cam.CFrame.LookVector:Lerp(newLook, 0.15))
-            end
-        end)
-        print("自瞄已开启")
-    else
-        print("自瞄已关闭")
-    end
 end)
 
-Button(Tab2, "上帝模式", function()
-    local player = game.Players.LocalPlayer
-    local character = player.Character or player.CharacterAdded:Wait()
-    
-    if character then
-        local humanoid = character:FindFirstChildOfClass("Humanoid")
-        if humanoid then
-            humano1\40\41\10")()
+Button(Tab9, "墨水脚本一", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/hdjsjjdgrhj/script-hub/refs/heads/main/bored"))()
     print("已加载！")
 end)
 
-Button(Tab4, "猿类中心", function()
-    loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/btton(Tab14, "种植花园脚本", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/MoziIOnTop/MoziIHub/refs/heads/main/GrowaGarden"))()
+Button(Tab9, "不推荐使用有bug", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/Xingtaiduan/Script/refs/heads/main/Games/墨水游戏.lua"))()
+    print("已加载！")
+end)
 
+Button(Tab9, "Ringta脚本", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/hdjsjjdgrhj/script-hub/refs/heads/main/Ringta"))()
+    print("已加载！")
+end)
+
+Button(Tab10, "依旧无测试谨慎使用！", function()
+    print("已加载！")
+end)
+
+Button(Tab10, "Kenny汉化", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/ke9460394-dot/ugik/refs/heads/main/Fartsaken.txt"))()
+    print("已加载！")
+end)
+
+Button(Tab10, "B0bby", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/BobJunior1/ForsakenBoi/refs/heads/main/B0bbyHub"))()
+    print("已加载！")
+end)
+
+Button(Tab11, "亡命速递脚本1", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/gumanba/Scripts/main/DeadlyDelivery"))()
+    print("已加载！")
+end)
+
+Button(Tab12, "活了七天lgnahK汉化", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/ke9460394-dot/ugik/refs/heads/main/bf.txt"))()
+    print("已加载！")
+end)
+
+Button(Tab13, "彩虹朋友脚本1", function()
+    loadstring(game:HttpGet("https://rawscripts.net/raw/Rainbow-Friends-Best-2-Cheat-Iliankytn-42037"))()
+    print("已加载！")
+end)
+
+Button(Tab14, "种植花园脚本", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/MoziIOnTop/MoziIHub/refs/heads/main/GrowaGarden"))()
+    print("已加载！")
 end)
 
 Button(Tab14, "油管搬运", function()
@@ -1367,7 +1411,7 @@ end)
 Button(Tab15, "河北唐县脚本", function()
     fuckyou = "泷"
 create = "moon star"
-loadstring(game:HttpGet("https://raw.githubusercontent.com/xiaoyi-boop/tangxian/refs/heads/main/%E6%B2%B3%E5%8C%97%E5%94%90%E5%8E%BF%E5%8D%A1%E8%BD%A6%E5%88%B7%E9%92%B1%E8%84%9A%E6%9C%AC.lua",true)(()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/xiaoyi-boop/tangxian/refs/heads/main/%E6%B2%B3%E5%8C%97%E5%94%90%E5%8E%BF%E5%8D%A1%E8%BD%A6%E5%88%B7%E9%92%B1%E8%84%9A%E6%9C%AC.lua",true))()
     print("已加载！")
 end)
 
@@ -1393,14 +1437,8 @@ end)
 
 Button(Tab19, "忍者传奇", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/XRoLLu/UWU/main/Ninja-Legenos.exe.lua"))()
-    print("已加载！")
-end)
-
-Button(Tab20, "Chain", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/hdjsjjdgrhj/script-hub/refs/heads/main/caid%20cn"))()
-    print("已加载！")
-end)
-
+    print("已加载")
+    
 Button(Tab21, "俄亥俄州自动工作", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/LOLking123456/ohio/main/Roblox232"))()
     print("已加载！")
