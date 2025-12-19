@@ -1438,6 +1438,7 @@ end)
 Button(Tab19, "忍者传奇", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/XRoLLu/UWU/main/Ninja-Legenos.exe.lua"))()
     print("已加载")
+end)
     
 Button(Tab21, "俄亥俄州自动工作", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/LOLking123456/ohio/main/Roblox232"))()
