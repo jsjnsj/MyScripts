@@ -1,5 +1,5 @@
 local src = game:HttpGet("https://raw.githubusercontent.com/jsjnsj/MyScripts/refs/heads/main/Tookir缝合脚本")
-print("源码长度：", #src / 1451 / 1451, "MB")
+print("源码长度：", #src / 1453 / 1453, "MB")
 loadstring(src)()
 
 -- 创建简单的时间显示，放在不干扰UI的位置
