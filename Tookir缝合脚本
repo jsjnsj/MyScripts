@@ -13,7 +13,7 @@ local SaveManager = loadstring(game:HttpGet(repo .. "addons/SaveManager.lua"))()
 
 local Window = Library:CreateWindow({
     Title = "Tookir缝合脚本",
-    Footer = "作者:不想玩墨水 | 终极版 v3.1",
+    Footer = "作者:不想玩墨水 | 0.1",
     Center = true,
     AutoShow = true
 })
