@@ -1,76 +1,9 @@
-local src = game:HttpGet("https://raw.githubusercontent.com/jsjnsj/MyScripts/refs/heads/main/Tookir缝合脚本")
-print("源码长度：", #src / 1453 / 1453, "MB")
-loadstring(src)()
-
--- 创建简单的时间显示，放在不干扰UI的位置
-local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "SimpleTimeDisplay"
-screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
-screenGui.ResetOnSpawn = false
-screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-screenGui.DisplayOrder = 1  -- 确保在WindUI下面
-
-local TimeLabel = Instance.new("TextLabel")
-TimeLabel.Name = "BeijingTimeLabel"
-TimeLabel.Parent = screenGui
-TimeLabel.Size = UDim2.new(0, 180, 0, 30)
--- 调整位置到更合适的地方（右上角但稍微下移）
-TimeLabel.Position = UDim2.new(1, -185, 0, 45)  -- 改为y=45，不会太靠顶
-TimeLabel.BackgroundTransparency = 0.7
-TimeLabel.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-TimeLabel.BorderSizePixel = 0
-TimeLabel.Text = "北京时间: 加载中..."
-TimeLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-TimeLabel.TextSize = 14
-TimeLabel.Font = Enum.Font.Gotham
-TimeLabel.TextXAlignment = Enum.TextXAlignment.Right
-TimeLabel.TextYAlignment = Enum.TextYAlignment.Center
-TimeLabel.ZIndex = 1  -- 设置为较低的ZIndex
-TimeLabel.Visible = true
-
--- 添加圆角
-local UICorner = Instance.new("UICorner")
-UICorner.CornerRadius = UDim.new(0, 6)
-UICorner.Parent = TimeLabel
-
--- 获取北京时间的简单方法
-local function getBeijingTimeSimple()
-    -- 使用Roblox的服务器时间作为基准
-    local serverTime = os.time()
-    
-    -- 服务器时间通常是UTC，转换为北京时间(UTC+8)
-    local timeInfo = os.date("!*t", serverTime)  -- 获取UTC时间
-    
-    local beijingHour = (timeInfo.hour + 8) % 24
-    local minute = timeInfo.min
-    local second = timeInfo.sec
-    
-    return beijingHour, minute, second
-end
-
--- 更新时间
-spawn(function()
-    while true do
-        local success, hour, minute, second = pcall(getBeijingTimeSimple)
-        
-        if success and hour and minute and second then
-            TimeLabel.Text = string.format("北京时间: %02d:%02d:%02d", hour, minute, second)
-        else
-            -- 备用方案：使用本地时间
-            local now = tick()
-            local time = os.date("*t", now)
-            TimeLabel.Text = string.format("本地时间: %02d:%02d:%02d", 
-                time.hour, time.min, time.sec)
-        end
-        
-        wait(1)
-    end
-end)
+local WindUI = loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/releases/latest/download/main.lua"))()
 
 local Window = WindUI:CreateWindow({
     Title = "Tookir缝合脚本",
     Icon = "door-open",
-    Author = "作者:不想玩墨水",
+    Author = "作者不想玩墨水",
     Folder = "CloudHub",
     Size = UDim2.fromOffset(560, 360),
     Transparent = true,
@@ -78,7 +11,7 @@ local Window = WindUI:CreateWindow({
     User = {
         Enabled = true,
         Callback = function() 
-            print("???") 
+            print("clicked") 
         end,
         Anonymous = true
     },
@@ -96,9 +29,8 @@ Window:EditOpenButton({
     Draggable = true,
 })
 
--- 便捷函数定义
-function Tab(a, icon)
-    return Window:Tab({Title = a, Icon = icon or "eye"})
+function Tab(a)
+    return Window:Tab({Title = a, Icon = "eye"})
 end
 
 function Button(a, b, c)
@@ -1439,12 +1371,12 @@ Button(Tab19, "忍者传奇", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/XRoLLu/UWU/main/Ninja-Legenos.exe.lua"))()
     print("已加载")
 end)
-
-    Button(Tab20, "chain", function()
+    
+    Button(Tab20, "Chain", function()
     loadstring(game:HttpGet('https://pastebin.com/raw/LESum4rq'))()
     print("已加载！")
 end)
-
+    
 Button(Tab21, "俄亥俄州自动工作", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/LOLking123456/ohio/main/Roblox232"))()
     print("已加载！")
