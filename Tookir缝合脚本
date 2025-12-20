@@ -1,166 +1,52 @@
-local WindUI = loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/releases/latest/download/main.lua"))()
+-- ========== 等待游戏完全加载 ==========
+if not game:IsLoaded() then game.Loaded:Wait() end
 
-local Window = WindUI:CreateWindow({
+local Players = game:GetService("Players")
+repeat task.wait() until Players.LocalPlayer
+local LocalPlayer = Players.LocalPlayer
+
+-- ========== 加载库 ==========
+local repo = "https://raw.githubusercontent.com/ATLASTEAM01/Obsidian/main/"
+local Library = loadstring(game:HttpGet(repo .. "Library.lua"))()
+local ThemeManager = loadstring(game:HttpGet(repo .. "addons/ThemeManager.lua"))()
+local SaveManager = loadstring(game:HttpGet(repo .. "addons/SaveManager.lua"))()
+
+local Window = Library:CreateWindow({
     Title = "Tookir缝合脚本",
-    Icon = "door-open",
-    Author = "作者:不想玩墨水",
-    Folder = "CloudHub",
-    Size = UDim2.fromOffset(560, 360),
-    Transparent = true,
-    Theme = "Dark",
-    User = {
-        Enabled = true,
-        Callback = function() 
-            print("???") 
-        end,
-        Anonymous = true
-    },
+    Footer = "作者:不想玩墨水 | 终极版 v3.1",
+    Center = true,
+    AutoShow = true
 })
 
-Window:EditOpenButton({
-    Title = "打开Tookir缝合脚本",
-    Icon = "monitor",
-    CornerRadius = UDim.new(0,16),
-    StrokeThickness = 2,
-    Color = ColorSequence.new(
-        Color3.fromHex("FF0F7B"),
-        Color3.fromHex("F89B29")
-    ),
-    Draggable = true,
-})
+-- ========== 简化标签页结构 ==========
+local Tabs = {}
+Tabs.Announce = Window:AddTab("公告", "door-open")
+Tabs.General = Window:AddTab("通用", "user")
+Tabs.Spin = Window:AddTab("旋转", "star")
+Tabs.Scripts = Window:AddTab("脚本中心", "bird")
+Tabs.Opqk = Window:AddTab("其他脚本", "bird")
+Tabs.UISettings = Window:AddTab("UI设置", "settings")
 
--- 便捷函数定义
-function Tab(a, icon)
-    return Window:Tab({Title = a, Icon = icon or "eye"})
-end
-
-function Button(a, b, c)
-    return a:Button({Title = b, Callback = c})
-end
-
-function Toggle(a, b, c, d)
-    return a:Toggle({Title = b, Value = c, Callback = d})
-end
-
-function Slider(a, b, c, d, e, f)
-    return a:Slider({Title = b, Step = 1, Value = {Min = c, Max = d, Default = e}, Callback = f})
-end
-
-function Dropdown(a, b, c, d, e)
-    return a:Dropdown({Title = b, Values = c, Value = d, Callback = e})
-end
-
--- 创建所有标签页
-local Tab1 = Tab("公告", "door-open")
-local Tab2 = Tab("通用", "user")
-local Tab3 = Tab("旋转", "star")
-local Tab4 = Tab("其他脚本", "bird")
-local Tab5 = Tab("Doors", "eye")
-local Tab6 = Tab("死铁轨", "eye")
-local Tab7 = Tab("99", "eye")
-local Tab8 = Tab("自然灾害", "eye")
-local Tab9 = Tab("墨水游戏(不保证能进去)", "eye")
-local Tab10 = Tab("被遗弃(不保证能进去)", "eye")
-local Tab11 = Tab("亡命速递", "eye")
-local Tab12 = Tab("活了七天", "eye")
-local Tab13 = Tab("彩虹朋友", "eye")
-local Tab14 = Tab("种植花园", "eye")
-local Tab15 = Tab("河北唐县", "eye")
-local Tab16 = Tab("伐木大厅", "eye")
-local Tab17 = Tab("力量传奇", "eye")
-local Tab18 = Tab("速度传奇", "eye")
-local Tab19 = Tab("忍者传奇", "eye")
-local Tab20 = Tab("Chain", "eye")
-local Tab21 = Tab("俄亥俄州", "eye")
-
--- 公告页按钮
-Tab1:Paragraph({
-    Title = "作者：",
-    Desc = [[不想玩墨水]],
-    Image = "door-open",
-    ImageSize = 24,
-    Color = Color3.fromHex("#FFFFFF"),
-    BackgroundTransparency = 1,
-    OutlineColor = Color3.fromHex("#FFFFFF"),
-    OutlineThickness = 1,
-    Padding = UDim.new(0, 1)
-})
-
-Tab1:Paragraph({
-    Title = "赞助人：",
-    Desc = [[无]],
-    Image = "door-open",
-    ImageSize = 24,
-    Color = Color3.fromHex("#FFFFFF"),
-    BackgroundTransparency = 1,
-    OutlineColor = Color3.fromHex("#FFFFFF"),
-    OutlineThickness = 1,
-    Padding = UDim.new(0, 1)
-})
-
-Tab1:Paragraph({
-    Title = "禁止二创",
-    Desc = [[敢二创的代价是全家死了，然后祖上18代的坟墓也被闪电劈没]],
-    Image = "door-open",
-    ImageSize = 24,
-    Color = Color3.fromHex("#FFFFFF"),
-    BackgroundTransparency = 1,
-    OutlineColor = Color3.fromHex("#FFFFFF"),
-    OutlineThickness = 1,
-    Padding = UDim.new(0, 1)
-})
-
-Tab1:Paragraph({
-    Title = "更新:",
-    Desc = [[添加了好多服务器本人要不行了,拿到此脚本，可以为此脚本做个宣传吗]],
-    Image = "door-open",
-    ImageSize = 24,
-    Color = Color3.fromHex("#FFFFFF"),
-    BackgroundTransparency = 1,
-    OutlineColor = Color3.fromHex("#FFFFFF"),
-    OutlineThickness = 1,
-    Padding = UDim.new(0, 1)
-})
-
-Tab1:Button({
-    Title = "作者QQ",
-    Callback = function()
-        setclipboard("2136024871")
-        print("复制成功")
-    end
-})
-
--- 玩家设置标签
-Slider(Tab2, "移动速度", 16, 200, 16, function(value)
-    local player = game.Players.LocalPlayer
-    if player.Character then
-        local humanoid = player.Character:FindFirstChildOfClass("Humanoid")
-        if humanoid then
-            humanoid.WalkSpeed = value
-        end
-    end
-    print("移动速度设置为: " .. value)
+-- ========== 公告页 ==========
+local AnnounceGroup = Tabs.Announce:AddLeftGroupbox("公告")
+AnnounceGroup:AddLabel("作者：不想玩墨水")
+AnnounceGroup:AddLabel("赞助人：无")
+AnnounceGroup:AddButton("QQ - 2136024871", function()
+    setclipboard("2136024871")
+    Library:Notify("QQ已复制！", 3)
 end)
 
-Slider(Tab2, "跳跃高度", 50, 200, 50, function(value)
-    local player = game.Players.LocalPlayer
-    if player.Character then
-        local humanoid = player.Character:FindFirstChildOfClass("Humanoid")
-        if humanoid then
-            humanoid.JumpPower = value
-        end
-    end
-    print("跳跃高度设置为: " .. value)
-end)
+-- ========== 通用页 - 玩家功能 ==========
+local PlayerGroup = Tabs.General:AddLeftGroupbox("玩家设置")
 
-Button(Tab2, "Yi指令台", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
-    print("Infinite Yield 已加载！")
-end)
-
--- 添加飞行按钮
-Button(Tab2, "飞行", function()
-    -- 如果飞行UI已存在，先销毁
+-- ✅ 飞行功能（完整恢复）
+PlayerGroup:AddButton("飞行", function()
+    local existingGUI = LocalPlayer.PlayerGui:FindFirstChild("main")
+    if existingGUI then existingGUI:Destroy() end
+    
+    local main = Instance.new("ScreenGui")
+    local Frame = Instance.new("Frame")
+     -- 如果飞行UI已存在，先销毁
     local existingGUI = game.Players.LocalPlayer.PlayerGui:FindFirstChild("main")
     if existingGUI then
         existingGUI:Destroy()
@@ -611,113 +497,37 @@ Button(Tab2, "飞行", function()
         closebutton.Position =  UDim2.new(0, 0, -1, 27)
     end)
 end)
-    
--- ========== 通用：全局夜视（地图覆盖） ==========
-local globalLighting = game:GetService("Lighting")
-local nightvisObj   = nil        -- 存放我们加的 PointLight
-Toggle(Tab2,"夜视",false,function(on)
-    if on then
-        -- 创建一个超亮、超远、无阴影的 PointLight 放在 Terrain 中心
-        nightvisObj = Instance.new("PointLight")
-        nightvisObj.Name = "GlobalNightVis"
-        nightvisObj.Range = 9999
-        nightvisObj.Brightness = 5
-        nightvisObj.Color = Color3.new(1,1,1)
-        nightvisObj.Shadows = false
-        nightvisObj.Parent = workspace.Terrain
-        -- 把环境调亮、去掉全局阴影
-        globalLighting.GlobalShadows = false
-        globalLighting.Ambient = Color3.new(1,1,1)
-        globalLighting.OutdoorAmbient = Color3.new(1,1,1)
-    else
-        if nightvisObj then nightvisObj:Destroy(); nightvisObj = nil end
-        globalLighting.GlobalShadows = true
-        globalLighting.Ambient = Color3.new(0,0,0)
-        globalLighting.OutdoorAmbient = Color3.new(127/255,127/255,127/255)
+
+-- 移动速度
+local WalkSpeedSlider = PlayerGroup:AddSlider("WalkSpeed", {
+    Text = "移动速度",
+    Min = 16, Max = 200, Default = 16, Rounding = 0
+})
+WalkSpeedSlider:OnChanged(function(value)
+    local character = LocalPlayer.Character
+    if character and character:FindFirstChildOfClass("Humanoid") then
+        character:FindFirstChildOfClass("Humanoid").WalkSpeed = value
     end
-    print("地图夜视 →",on and "开" or "关")
 end)
 
--- ========== 通用：玩家穿墙（仅自己） ==========
-local noclipConn = nil
-Toggle(Tab2,"穿墙",false,function(on)
-    local lp = game.Players.LocalPlayer
-    if on then
-        noclipConn = game:GetService("RunService").Stepped:Connect(function()
-            local char = lp.Character
-            if char then
-                for _,p in pairs(char:GetDescendants()) do
-                    if p:IsA("BasePart") then p.CanCollide = false end
-                end
-            end
-        end)
-    else
-        if noclipConn then noclipConn:Disconnect(); noclipConn = nil end
+-- 跳跃高度
+local JumpPowerSlider = PlayerGroup:AddSlider("JumpPower", {
+    Text = "跳跃高度",
+    Min = 50, Max = 200, Default = 50, Rounding = 0
+})
+JumpPowerSlider:OnChanged(function(value)
+    local character = LocalPlayer.Character
+    if character and character:FindFirstChildOfClass("Humanoid") then
+        character:FindFirstChildOfClass("Humanoid").JumpPower = value
     end
-    print("穿墙 →",on and "开" or "关")
 end)
 
--- ========== 通用：无限跳跃 ==========
-local infJumpConn = nil
-Toggle(Tab2, "无限跳跃", false, function(on)
-    local lp = game.Players.LocalPlayer
-    if on then
-        -- 只要检测到空格按下就再给一次跳跃能力
-        infJumpConn = game:GetService("UserInputService").JumpRequest:Connect(function()
-            local char = lp.Character
-            if char and char:FindFirstChildOfClass("Humanoid") then
-                char:FindFirstChildOfClass("Humanoid"):ChangeState(Enum.HumanoidStateType.Jumping)
-            end
-        end)
-    else
-        if infJumpConn then infJumpConn:Disconnect(); infJumpConn = nil end
-    end
-    print("无限跳跃 →", on and "开" or "关")
-end)
+-- ========== 通用页 - 核心功能 ==========
+local FuncGroup = Tabs.General:AddRightGroupbox("核心功能")
+local Lighting = game:GetService("Lighting")
+local nightvisObj, noclipConn, infJumpConn
 
-Button(Tab2, "无敌少侠R15飞行", function()
-    loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Invinicible-Flight-R15-45414"))()
-    print("已加载！")
-end)
-
-Button(Tab2, "无敌少侠r6飞行", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/ke9460394-dot/ugik/refs/heads/main/%E6%97%A0%E6%95%8C%E5%B0%91%E4%BE%A0%E9%A3%9E%E8%A1%8Cr6.txt"))()
-    print("Infinite Yield 已加载！")
-end)
-
-Button(Tab2, "撸管R6", function()
-    loadstring(game:HttpGet("https://pastefy.app/wa3v2Vgm/raw"))()
-    print("已加载！")
-end)
-
-Button(Tab2, "撸管R15", function()
-    loadstring(game:HttpGet("https://pastefy.app/YZoglOyJ/raw"))()
-    print("已加载！")
-end)
-
-Button(Tab2, "悬空", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/GhostPlayer352/Test4/main/Float"))()
-    print("已加载！")
-end)
-
-Button(Tab2, "上天堂", function()
-     loadstring(game:HttpGet("https://pastefy.app/xV1T3PAi/raw"))()
-    print("已加载！")
-end)
-
-Button(Tab2, "帅飞所有人", function()
-    loadstring(game:HttpGet("https://pastebin.com/raw/zqyDSUWX"))()
-    print("已加载！")
-end)
-
-Button(Tab2, "管理员", function()
-      loadstring(game:HttpGet("https://pastebin.com/raw/sZpgTVas"))()
-    print("已加载！")
-end)
-
-local Players = game:GetService("Players")
-local localPlayer = Players.LocalPlayer
-
+-- ✅ 正确的甩飞函数（新逻辑）
 local function ThrowSinglePlayer(targetPlayer)
     local targetNames = { targetPlayer.Name }
     local isAllOrOthers = false
@@ -730,14 +540,14 @@ local function ThrowSinglePlayer(targetPlayer)
         end
         if name == "random" then
             local allPlayers = Players:GetPlayers()
-            if table.find(allPlayers, localPlayer) then
-                table.remove(allPlayers, table.find(allPlayers, localPlayer))
+            if table.find(allPlayers, LocalPlayer) then
+                table.remove(allPlayers, table.find(allPlayers, LocalPlayer))
             end
             return allPlayers[math.random(#allPlayers)]
         end
         if name ~= "random" and name ~= "all" and name ~= "others" then
             for _, player in ipairs(Players:GetPlayers()) do
-                if player ~= localPlayer then
+                if player ~= LocalPlayer then
                     if player.Name:lower():match("^" .. name) then
                         return player
                     end
@@ -756,7 +566,7 @@ local function ThrowSinglePlayer(targetPlayer)
     end
 
     local function ThrowPlayer(targetPlayer)
-        local localCharacter = localPlayer.Character
+        local localCharacter = LocalPlayer.Character
         local localHumanoid = localCharacter and localCharacter:FindFirstChildOfClass("Humanoid")
         local localRootPart = localHumanoid and localHumanoid.RootPart
         local targetCharacter = targetPlayer.Character
@@ -955,152 +765,159 @@ local function ThrowSinglePlayer(targetPlayer)
     -- 执行甩飞（只甩这 1 个人）
     for _, name in ipairs(targetNames) do
         local found = FindPlayerByName(name)
-        if found and found ~= localPlayer then
+        if found and found ~= LocalPlayer then
             ThrowPlayer(found)
         end
     end
 end
--- ============================================================================
 
--- 生成玩家列表（不含自己）
+-- 生成玩家列表
 local function buildPlayerList()
     local t = {}
     for _, p in ipairs(Players:GetPlayers()) do
-        if p ~= localPlayer then
+        if p ~= LocalPlayer then
             table.insert(t, p.Name)
         end
     end
     return t
 end
 
--- >>> WindUI Dropdown：子按钮 = 所有玩家名
-local drop = Tab2:Dropdown({
-    Title   = "选择甩飞玩家",
-    Values  = buildPlayerList(),
-    Value   = nil,
-    Callback = function(selected)
+-- 甩飞玩家下拉菜单
+local ThrowDropdown = FuncGroup:AddDropdown("ThrowPlayer", {
+    Text = "选择甩飞玩家",
+    Values = buildPlayerList()
+})
+ThrowDropdown:OnChanged(function(selected)
+    pcall(function()
         local target = Players:FindFirstChild(selected)
         if target then
             ThrowSinglePlayer(target)
         end
+    end)
+end)
+
+-- 其他功能按钮
+FuncGroup:AddButton("上天堂", function()
+    loadstring(game:HttpGet("https://pastefy.app/xV1T3PAi/raw"))()
+    Library:Notify("已加载！", 3)
+end)
+
+FuncGroup:AddButton("帅飞所有人", function()
+    loadstring(game:HttpGet("https://pastebin.com/raw/zqyDSUWX"))()
+    Library:Notify("已加载！", 3)
+end)
+
+FuncGroup:AddButton("无敌少侠R15飞行", function()
+    loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Invinicible-Flight-R15-45414"))()
+    Library:Notify("已加载！", 3)
+end)
+
+FuncGroup:AddButton("无敌少侠R6飞行", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/ke9460394-dot/ugik/refs/heads/main/%E6%97%A0%E6%95%8C%E5%B0%91%E4%BE%A0%E9%A3%9E%E8%A1%8Cr6.txt"))()
+    Library:Notify("已加载！", 3)
+end)
+
+FuncGroup:AddButton("R15撸管", function()
+    loadstring(game:HttpGet("https://pastefy.app/YZoglOyJ/raw"))()
+    Library:Notify("已加载！", 3)
+end)
+
+FuncGroup:AddButton("R6撸管", function()
+    loadstring(game:HttpGet("https://pastefy.app/wa3v2Vgm/raw"))()
+    Library:Notify("已加载！", 3)
+end)
+
+FuncGroup:AddButton("上帝模式", function()
+    local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+    local humanoid = character:FindFirstChildOfClass("Humanoid")
+    if humanoid then
+        humanoid.MaxHealth, humanoid.Health = math.huge, math.huge
+        humanoid.HealthChanged:Connect(function() humanoid.Health = math.huge end)
+        Library:Notify("上帝模式已开启！", 3)
     end
+end)
+
+FuncGroup:AddButton("透视", function()
+    loadstring(game:HttpGet("https://pastefy.app/LE2hzECZ/raw"))()
+    Library:Notify("已加载！", 3)
+end)
+
+-- 夜视、穿墙、无限跳跃
+local NightVisionToggle = FuncGroup:AddToggle("NightVision", {
+    Text = "夜视",
+    Default = false
 })
-
--- 玩家进出自动刷新列表
-Players.PlayerAdded:Connect(function()
-    drop:SetValues(buildPlayerList())
-end)
-Players.PlayerRemoving:Connect(function()
-    drop:SetValues(buildPlayerList())
-end)
-
-Toggle(Tab2, "自瞄（更新）", false, function(on)
-    -- 清理旧连接
-    if _G.aimLoop then
-        _G.aimLoop:Disconnect()
-        _G.aimLoop = nil
+NightVisionToggle:OnChanged(function()
+    if NightVisionToggle.Value then
+        nightvisObj = Instance.new("PointLight")
+        nightvisObj.Range, nightvisObj.Brightness = 9999, 5
+        nightvisObj.Color, nightvisObj.Shadows = Color3.new(1,1,1), false
+        nightvisObj.Parent = workspace.Terrain
+        Lighting.GlobalShadows = false
+        Lighting.Ambient = Color3.new(1,1,1)
+        Lighting.OutdoorAmbient = Color3.new(1,1,1)
+    else
+        if nightvisObj then nightvisObj:Destroy() end
+        Lighting.GlobalShadows = true
+        Lighting.Ambient = Color3.new(0,0,0)
+        Lighting.OutdoorAmbient = Color3.new(0.5,0.5,0.5)
     end
-    if not on then return end   -- 关开关直接停
+end)
 
-    local cam = workspace.CurrentCamera
-    local lp  = game:GetService("Players").LocalPlayer
-    local rs  = game:GetService("RunService")
-    local UserInputService = game:GetService("UserInputService")
-
-    local SMOOTH = 0.08
-    local OFFSET = Vector3.new(0, 0.2, 0)
-
-    -- 取最近且可见的玩家头部
-    local function getTarget()
-        local tgt, minDot = nil, -math.huge
-        for _, p in ipairs(game:GetService("Players"):GetPlayers()) do
-            if p ~= lp and p.Character and p.Character:FindFirstChild("Head") then
-                local head = p.Character.Head
-                local dir = (head.Position - cam.CFrame.Position).Unit
-                local dot = cam.CFrame.LookVector:Dot(dir)
-                if dot > minDot then
-                    local rayParams = RaycastParams.new()
-                    rayParams.FilterDescendantsInstances = {lp.Character}
-                    rayParams.FilterType = Enum.RaycastFilterType.Blacklist
-                    local offset = 0
-                    local result
-                    repeat
-                        result = workspace:Raycast(cam.CFrame.Position, dir * 5000 + Vector3.new(0, offset, 0), rayParams)
-                        offset = offset + 2
-                    until not result or result.Instance == head or offset > 10
-                    if result and result.Instance == head then
-                        tgt = head
-                        minDot = dot
-                    end
+local NoclipToggle = FuncGroup:AddToggle("Noclip", {
+    Text = "穿墙",
+    Default = false
+})
+NoclipToggle:OnChanged(function()
+    if NoclipToggle.Value then
+        noclipConn = game:GetService("RunService").Stepped:Connect(function()
+            local character = LocalPlayer.Character
+            if character then
+                for _, part in pairs(character:GetDescendants()) do
+                    if part:IsA("BasePart") then part.CanCollide = false end
                 end
             end
-        end
-        return tgt
-    end
-
-    -- 主循环：随时都在锁（不需要按鼠标）
-    _G.aimLoop = rs.RenderStepped:Connect(function()
-        local t = getTarget()
-        if t then
-            local goalCF = CFrame.lookAt(cam.CFrame.Position, t.Position + OFFSET)
-            cam.CFrame = cam.CFrame:Lerp(goalCF, SMOOTH)
-        end
-    end)
-
-    Toast("全图自瞄已开启（无距）", "success")
-end)
-
-Button(Tab2, "上帝模式", function()
-    local player = game.Players.LocalPlayer
-    local character = player.Character or player.CharacterAdded:Wait()
-    
-    if character then
-        local humanoid = character:FindFirstChildOfClass("Humanoid")
-        if humanoid then
-            humanoid.MaxHealth = math.huge
-            humanoid.Health = math.huge
-            
-            -- 防止受伤
-            humanoid.HealthChanged:Connect(function()
-                humanoid.Health = math.huge
-            end)
-            
-            print("上帝模式已开启！")
-        end
+        end)
+    else
+        if noclipConn then noclipConn:Disconnect() end
     end
 end)
 
-Button(Tab2, "透视", function()
-    loadstring(game:HttpGet("https://pastefy.app/LE2hzECZ/raw"))()
-    print("已加载！")
+local InfJumpToggle = FuncGroup:AddToggle("InfJump", {
+    Text = "无限跳跃",
+    Default = false
+})
+InfJumpToggle:OnChanged(function()
+    if InfJumpToggle.Value then
+        infJumpConn = game:GetService("UserInputService").JumpRequest:Connect(function()
+            local character = LocalPlayer.Character
+            if character and character:FindFirstChildOfClass("Humanoid") then
+                character:FindFirstChildOfClass("Humanoid"):ChangeState(Enum.HumanoidStateType.Jumping)
+            end
+        end)
+    else
+        if infJumpConn then infJumpConn:Disconnect() end
+    end
 end)
 
-Button(Tab2, "工具包", function()
-    loadstring(game:HttpGet("https://cdn.wearedevs.net/scripts/BTools.txt"))()
-    print("已加载！")
-end)
+-- ========== 旋转页 ==========
+local SpinGroup = Tabs.Spin:AddLeftGroupbox("旋转控制")
+local angular, LAST_SPEED = nil, 0
 
-Button(Tab2, "Dex", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/renlua/Script-Tutorial/refs/heads/main/dex.lua"))()
-    print("已加载！")
-end)
-
--- ========== 旋转功能 - 死亡后自动恢复 ==========
-local angular = nil        -- BodyAngularVelocity 实例
-local LAST_SPEED = 0       -- 记住速度
-local lp = game:GetService("Players").LocalPlayer
-
--- 创建/更新旋转
-local function setSpin(speed)
-    local char = lp.Character or lp.CharacterAdded:Wait()
-    local root = char:WaitForChild("HumanoidRootPart", 2)
-    if not root then return end
-
-    if speed == 0 then
+local SpinSpeedSlider = SpinGroup:AddSlider("SpinSpeed", {
+    Text = "旋转速度",
+    Min = 0, Max = 200, Default = 0, Rounding = 0
+})
+SpinSpeedSlider:OnChanged(function(value)
+    if value == 0 then
         if angular then angular:Destroy(); angular = nil end
         return
     end
-
+    
+    local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+    local root = character:FindFirstChild("HumanoidRootPart")
+    if not root then return end
+    
     if not angular or angular.Parent ~= root then
         if angular then angular:Destroy() end
         angular = Instance.new("BodyAngularVelocity")
@@ -1109,283 +926,95 @@ local function setSpin(speed)
         angular.P = 50000
         angular.Parent = root
     end
-    angular.AngularVelocity = Vector3.new(0, speed * 0.8, 0)
-    LAST_SPEED = speed
+    
+    angular.AngularVelocity = Vector3.new(0, value * 0.8, 0)
+    LAST_SPEED = value
+end)
+
+LocalPlayer.CharacterAdded:Connect(function(char)
+    task.wait(0.5)
+    if LAST_SPEED ~= 0 then
+        SpinSpeedSlider:SetValue(LAST_SPEED)
+    end
+end)
+
+-- ========== 脚本中心页 ==========
+local ScriptBox = Tabs.Scripts:AddLeftGroupbox("服务器脚本")
+
+-- 定义所有服务器脚本
+local serverScripts = {
+    {name = "Doors - Abysall", url = "https://raw.githubusercontent.com/atnew2025/Chinese-scripts/refs/heads/main/Abysallcn-hub"},
+    {name = "Doors - XA", url = "https://pastebin.com/raw/65TwT8ja"},
+    {name = "死铁轨 - 刷债券", url = "https://raw.githubusercontent.com/hungquan99/HungHUB/main/loader.lua"},
+    {name = "死铁轨 - 英文版", url = "https://raw.githubusercontent.com/gumanba/Scripts/main/DeadRails"},
+    {name = "99 - 可杀队友", url = "https://raw.githubusercontent.com/atnew2025/Chinese-scripts/refs/heads/main/CPS-99nights"},
+    {name = "99 - 刷钻石", url = "https://raw.githubusercontent.com/sleepyvill/script/refs/heads/main/99nights.lua"},
+    {name = "99 - XA", url = "https://raw.githubusercontent.com/Xingtaiduan/Script/refs/heads/main/Games/森林中的99夜.lua"},
+    {name = "自然灾害 - XA", url = "https://raw.githubusercontent.com/Xingtaiduan/Script/refs/heads/main/Games/自然灾害.lua"},
+    {name = "自然灾害 - 黑洞", url = "https://rawscripts.net/raw/Universal-Script-Super-ring-Parts-V6-28581"},
+    {name = "墨水游戏 - 脚本1", url = "https://raw.githubusercontent.com/hdjsjjdgrhj/script-hub/refs/heads/main/bored"},
+    {name = "墨水游戏 - Ringta", url = "https://raw.githubusercontent.com/hdjsjjdgrhj/script-hub/refs/heads/main/Ringta"},
+    {name = "被遗弃 - Kenny", url = "https://raw.githubusercontent.com/ke9460394-dot/ugik/refs/heads/main/Fartsaken.txt"},
+    {name = "被遗弃 - B0bby", url = "https://raw.githubusercontent.com/BobJunior1/ForsakenBoi/refs/heads/main/B0bbyHub"},
+    {name = "亡命速递", url = "https://raw.githubusercontent.com/gumanba/Scripts/main/DeadlyDelivery"},
+    {name = "活了七天", url = "https://raw.githubusercontent.com/ke9460394-dot/ugik/refs/heads/main/bf.txt"},
+    {name = "彩虹朋友", url = "https://rawscripts.net/raw/Rainbow-Friends-Best-2-Cheat-Iliankytn-42037"},
+    {name = "种植花园", url = "https://raw.githubusercontent.com/MoziIOnTop/MoziIHub/refs/heads/main/GrowaGarden"},
+    {name = "种植花园 - 油管", url = "https://raw.githubusercontent.com/GlazeScripts/ZusumeHub/refs/heads/main/UpdateZysume"},
+    {name = "河北唐县", url = "https://raw.githubusercontent.com/xiaoyi-boop/tangxian/refs/heads/main/%E6%B2%B3%E5%8C%97%E5%94%90%E5%8E%BF%E5%8D%A1%E8%BD%A6%E5%88%B7%E9%92%B1%E8%84%9A%E6%9C%AC.lua"},
+    {name = "力量传奇", url = "https://raw.githubusercontent.com/rndmq/Serverlist/refs/heads/main/Loader"},
+    {name = "速度传奇", url = "https://relzhub.farrghii.com/loader.lua"},
+    {name = "忍者传奇", url = "https://raw.githubusercontent.com/XRoLLu/UWU/main/Ninja-Legenos.exe.lua"},
+    {name = "Chain", url = "https://pastebin.com/raw/LESum4rq"},
+    {name = "俄亥俄州 - 自动工作", url = "https://raw.githubusercontent.com/LOLking123456/ohio/main/Roblox232"},
+    {name = "俄亥俄州 - 第2版", url = "https://raw.githubusercontent.com/Alan0947383/Demonic-HUB-V2/main/S-C-R-I-P-T.lua"},
+}
+
+-- 批量添加所有服务器脚本按钮
+for i, scriptInfo in ipairs(serverScripts) do
+    ScriptBox:AddButton(scriptInfo.name, function()
+        pcall(function()
+            loadstring(game:HttpGet(scriptInfo.url))()
+            Library:Notify("✅ " .. scriptInfo.name .. " 已加载！", 3)
+        end)
+    end)
 end
 
--- 滑条控制
-Slider(Tab3, "旋转速度", 0, 200, 0, setSpin)
+local ScriptBox = Tabs.Opqk:AddLeftGroupbox("其他脚本")
 
--- 重生自动恢复
-lp.CharacterAdded:Connect(function(char)
-    task.wait(0.5)
-    if LAST_SPEED ~= 0 then setSpin(LAST_SPEED) end
-end)
-
-Button(Tab4, "XC", function()
-    loadstring(game:HttpGet("https://pastebin.com/raw/gemxHwA1"))()
-    print("已加载！")
-end)
-
-Button(Tab4, "导管中心", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/useranewrff/roblox-/main/导管中心"))()
-    print("已加载！")
-end)
-
-Button(Tab4, "皮脚本", function()
+ScriptBox:AddButton("皮脚本", function()
     getgenv().XiaoPi = "皮脚本QQ群1002100032" 
     loadstring(game:HttpGet("https://raw.githubusercontent.com/xiaopi77/xiaopi77/main/QQ1002100032-Roblox-Pi-script.lua"))()
-    print("已加载！")
+    Library:Notify("已加载！", 3)
 end)
 
-Button(Tab4, "逆光脚本", function()
-    getgenv().NiGuang = "逆光Q群980694674"
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/lool8/-/refs/heads/main/%E9%80%86%E5%85%89.lua"))()
-    print("已加载！")
+ScriptBox:AddButton("XC", function()
+    loadstring(game:HttpGet("https://pastebin.com/raw/gemxHwA1"))()
+    Library:Notify("已加载！", 3)
 end)
 
-Button(Tab4, "秋自制脚本", function()
-    local SCC_CharPool={
-[1]= tostring(utf8.char((function() return table.unpack({104,116,116,112,115,58,47,47,114,97,119,46,103,105,116,104,117,98,117,115,101,114,99,111,110,116,101,110,116,46,99,111,109,47,87,83,56,53,55,57,54,48,47,45,47,109,97,105,110,47,37,69,55,37,65,55,37,56,66,37,67,50,37,66,55,37,69,56,37,56,55,37,65,65,37,69,53,37,56,56,37,66,54,37,69,56,37,56,52,37,57,65,37,69,54,37,57,67,37,65,67,37,69,54,37,57,54,37,66,48,37,69,54,37,66,65,37,57,48,37,69,55,37,65,48,37,56,49,46,116,120,116})end)()))}
-loadstring(game:HttpGet(SCC_CharPool[1]))()
-    print("已加载！")
+ScriptBox:AddButton("导管中心", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/useranewrff/roblox-/main/导管中心"))()
+    Library:Notify("已加载！", 3)
 end)
 
-Button(Tab4, "X脚本", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/maowang1/xx/refs/heads/main/Protected_8858329470146381.txt"))()
-    print("已加载！")
-end)
+-- ========== UI设置页 ==========
+local ConfigGroup = Tabs.UISettings:AddLeftGroupbox("配置管理")
+ConfigGroup:AddButton("✅ 保存配置", function() SaveManager:SaveConfiguration() Library:Notify("已保存", 2) end)
+ConfigGroup:AddButton("📂 加载配置", function() SaveManager:LoadConfiguration() Library:Notify("已加载", 2) end)
+ConfigGroup:AddButton("🗑️ 清除配置", function() SaveManager:ClearConfiguration() Library:Notify("已清除", 2) end)
+ConfigGroup:AddButton("❌ 删除UI", function() Library:Unload() end)
 
-Button(Tab4, "XA", function()
-    loadstring(game:HttpGet("https://pastebin.com/raw/h8nC0fLb", true))()loadstring(game:HttpGet("https://raw.githubusercontent.com/XingFork/Scripts/refs/heads/main/Ohio"))()
-    print("已加载！")
-end)
+-- ========== 初始化系统 ==========
+SaveManager:SetLibrary(Library)
+ThemeManager:SetLibrary(Library)
+SaveManager:IgnoreThemeSettings()
+SaveManager:SetIgnoreIndexes({ "MenuKeybind" })
+SaveManager:SetFolder("TookirStitch")
+SaveManager:BuildConfigSection(Tabs.UISettings)
+ThemeManager:ApplyToTab(Tabs.UISettings)
+SaveManager:LoadAutoloadConfig()
 
-Button(Tab4, "脚本中心", function()
-    loadstring(utf8.char((function() return table.unpack({108,111,97,100,115,116,114,105,110,103,40,103,97,109,101,58,72,116,116,112,71,101,116,40,34,104,116,116,112,115,58,47,47,114,97,119,46,103,105,116,104,117,98,117,115,101,114,99,111,110,116,101,110,116,46,99,111,109,47,67,104,105,110,97,81,89,47,45,47,109,97,105,110,47,37,69,54,37,56,51,37,56,53,37,69,52,37,66,65,37,57,49,34,41,41,40,41})end)()))()
-    print("已加载！")
-end)
+print("✅ 所有功能加载完成！")
+Library:Notify("🎉 Tookir缝合脚本 v3.0 已就绪！", 5)
 
-Button(Tab4, "神光脚本", function()
-    loadstring(game:HttpGet(utf8.char((function() return table.unpack({104,116,116,112,115,58,47,47,112,97,115,116,101,98,105,110,46,99,111,109,47,114,97,119,47,56,102,50,76,99,113,113,80})end)())))()
-    print("已加载！")
-end)
-
-Button(Tab4, "小达内部", function()
-    loadstring("\108\111\97\100\115\116\114\105\110\103\40\103\97\109\101\58\72\116\116\112\71\101\116\34\104\116\116\112\115\58\47\47\112\97\115\116\101\98\105\110\46\99\111\109\47\114\97\119\47\54\88\67\87\82\87\110\76\34\41\40\41\40\103\97\109\101\58\72\116\116\112\71\101\116\34\104\116\116\112\115\58\47\47\112\97\115\116\101\98\105\110\46\99\111\109\47\114\97\119\47\78\112\86\65\110\119\110\104\34\41\40\41\10")()
-    print("已加载！")
-end)
-
-Button(Tab4, "猿类中心", function()
-    loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/b2004278b4735e1ca615931116373d48.lua"))()
-    print("已加载！")   
-end)
-
-Button(Tab4, "叶脚本", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/roblox-ye/QQ515966991/refs/heads/main/ROBLOX-CNVIP-XIAOYE.lua"))()
-    print("已加载!  ")
-end)
-    
-    Button(Tab4, "禁漫中心", function()
-    getgenv().LS="禁漫中心" loadstring(game:HttpGet("https://raw.githubusercontent.com/dingding123hhh/ng/main/jmlllllllIIIIlllllII.lua"))()
-    print("已加载！")
-end)
-
-Tab4:Paragraph({
-    Title = "没了",
-    Desc = [[真没了，别往下滑了]],
-    Image = "door-open",
-    ImageSize = 24,
-    Color = Color3.fromHex("#FFFFFF"),
-    BackgroundTransparency = 1,
-    OutlineColor = Color3.fromHex("#FFFFFF"),
-    OutlineThickness = 1,
-    Padding = UDim.new(0, 1)
-})
-
-Tab4:Paragraph({
-    Title = "没了",
-    Desc = [[真没了，别往下滑了]],
-    Image = "door-open",
-    ImageSize = 24,
-    Color = Color3.fromHex("#FFFFFF"),
-    BackgroundTransparency = 1,
-    OutlineColor = Color3.fromHex("#FFFFFF"),
-    OutlineThickness = 1,
-    Padding = UDim.new(0, 1)
-})
-Tab4:Paragraph({
-    Title = "没了",
-    Desc = [[真没了，别往下滑了]],
-    Image = "door-open",
-    ImageSize = 24,
-    Color = Color3.fromHex("#FFFFFF"),
-    BackgroundTransparency = 1,
-    OutlineColor = Color3.fromHex("#FFFFFF"),
-    OutlineThickness = 1,
-    Padding = UDim.new(0, 1)
-})
-
-Button(Tab4, "好吧，你发现了彩蛋点击执行", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/jsjnsj/my-roblox-scripts/refs/heads/main/xhknfjnknn.%E8%87%AA%E5%88%B6%E8%84%9A%E6%9C%AC"))()
-    print("已加载！")
-end)
-
---建造Doors
-Button(Tab5, "Abysall Doors", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/atnew2025/Chinese-scripts/refs/heads/main/Abysallcn-hub"))()
-    print("已加载！")
-end)
-
-Button(Tab5, "这个我也不知道", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/TheHunterSolo1/Scripts/refs/heads/main/Protected_2809220311826785.lua.txt"))()
-    print("已加载！")
-end)
-
-Button(Tab5, "Doors XA", function()
-    --[[Doors Blackking And BobHub脚本汉化]]loadstring(game:HttpGet("\104\116\116\112\115\58\47\47\112\97\115\116\101\98\105\110\46\99\111\109\47\114\97\119\47\54\53\84\119\84\56\106\97"))()
-    print("已加载！")
-end)
-
-Button(Tab6, "死铁锅刷债券脚本", function()
-    getgenv().AutoExecute = true(loadstring or load)(game:HttpGet("https://raw.githubusercontent.com/hungquan99/HungHUB/main/loader.lua"))()
-    print("已加载！")
-end)
-
-Button(Tab6, "死铁轨英文脚本", function()
-loadstring(game:HttpGet("https://raw.githubusercontent.com/gumanba/Scripts/main/DeadRails"))()
-    print("已加载！")
-end)
-
-Button(Tab7, "99可杀队友", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/atnew2025/Chinese-scripts/refs/heads/main/CPS-99nights"))()
-    print("已加载！")
-end)
-
-Button(Tab7, "刷钻石?", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/sleepyvill/script/refs/heads/main/99nights.lua"))()
-    print("已加载！")
-end)
-
-Button(Tab7, "XA 99", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/Xingtaiduan/Script/refs/heads/main/Games/森林中的99夜.lua"))()
-    print("已加载！")
-end)
-
---自然灾害
-Button(Tab8, "XA 自然灾害脚本", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/Xingtaiduan/Script/refs/heads/main/Games/自然灾害.lua"))()
-    print("已加载！")
-end)
-
-Button(Tab8, "黑洞v6脚本", function()
-    loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Super-ring-Parts-V6-28581"))()
-    print("已加载！")
-end)
-
-Button(Tab9, "注意以下脚本未经过测试谨慎使用！", function()
-    print("已加载！")
-end)
-
-Button(Tab9, "墨水脚本一", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/hdjsjjdgrhj/script-hub/refs/heads/main/bored"))()
-    print("已加载！")
-end)
-
-Button(Tab9, "不推荐使用有bug", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/Xingtaiduan/Script/refs/heads/main/Games/墨水游戏.lua"))()
-    print("已加载！")
-end)
-
-Button(Tab9, "Ringta脚本", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/hdjsjjdgrhj/script-hub/refs/heads/main/Ringta"))()
-    print("已加载！")
-end)
-
-Button(Tab10, "依旧无测试谨慎使用！", function()
-    print("已加载！")
-end)
-
-Button(Tab10, "Kenny汉化", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/ke9460394-dot/ugik/refs/heads/main/Fartsaken.txt"))()
-    print("已加载！")
-end)
-
-Button(Tab10, "B0bby", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/BobJunior1/ForsakenBoi/refs/heads/main/B0bbyHub"))()
-    print("已加载！")
-end)
-
-Button(Tab11, "亡命速递脚本1", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/gumanba/Scripts/main/DeadlyDelivery"))()
-    print("已加载！")
-end)
-
-Button(Tab12, "活了七天lgnahK汉化", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/ke9460394-dot/ugik/refs/heads/main/bf.txt"))()
-    print("已加载！")
-end)
-
-Button(Tab13, "彩虹朋友脚本1", function()
-    loadstring(game:HttpGet("https://rawscripts.net/raw/Rainbow-Friends-Best-2-Cheat-Iliankytn-42037"))()
-    print("已加载！")
-end)
-
-Button(Tab14, "种植花园脚本", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/MoziIOnTop/MoziIHub/refs/heads/main/GrowaGarden"))()
-    print("已加载！")
-end)
-
-Button(Tab14, "油管搬运", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/GlazeScripts/ZusumeHub/refs/heads/main/UpdateZysume"))()
-    print("已加载！")
-end)
-
-Button(Tab15, "河北唐县脚本", function()
-    fuckyou = "泷"
-create = "moon star"
-loadstring(game:HttpGet("https://raw.githubusercontent.com/xiaoyi-boop/tangxian/refs/heads/main/%E6%B2%B3%E5%8C%97%E5%94%90%E5%8E%BF%E5%8D%A1%E8%BD%A6%E5%88%B7%E9%92%B1%E8%84%9A%E6%9C%AC.lua",true))()
-    print("已加载！")
-end)
-
-Button(Tab16, "伐木大厅LuaWare汉化", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/XiaoYunCN/UWU/main/LuaWare.lua", true))()
-    print("已加载！")
-end)
-
-Button(Tab16, "伐木大厅金钱生成", function()
-    loadstring(game:HttpGet("https://pastebin.com/raw/p9mEnV28"))()
-    print("已加载！")
-end)
-
-Button(Tab17, "力量传奇一", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/rndmq/Serverlist/refs/heads/main/Loader"))()
-    print("已加载！")
-end)
-
-Button(Tab18, "速度传奇一", function()
-    loadstring(game:HttpGet("https://relzhub.farrghii.com/loader.lua"))()
-    print("已加载！")
-end)
-
-Button(Tab19, "忍者传奇", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/XRoLLu/UWU/main/Ninja-Legenos.exe.lua"))()
-    print("已加载")
-end)
-
-Button(Tab20, "Chain", function()
-    loadstring(game:HttpGet('https://pastebin.com/raw/LESum4rq'))()
-    print("已加载！")
-end)
-
-Button(Tab21, "俄亥俄州自动工作", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/LOLking123456/ohio/main/Roblox232"))()
-    print("已加载！")
-end)
-
-Button(Tab21, "俄亥俄州2", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/Alan0947383/Demonic-HUB-V2/main/S-C-R-I-P-T.lua",true))()
-    print("已加载！")
-end)
-
-print("脚本界面加载已完成，尽情享用!")
