@@ -864,6 +864,10 @@ Button(Tab2, "慢跑侠", function()
     print("已加载！")
 end)
 
+Button(Tab2,"坐下",function()
+    game.Players.LocalPlayer.Character.Humanoid.Sit = true
+end)
+
 -- ========== 旋转功能 - 死亡后自动恢复 ==========
 local angular = nil        -- BodyAngularVelocity 实例
 local LAST_SPEED = 0       -- 记住速度
