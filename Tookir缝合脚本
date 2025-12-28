@@ -283,7 +283,7 @@ local function setHealth(value)
 end
 
 -- 创建血量滑条
-Slider(Tab2, "最大血量", 100, 100000, 100, function(value)
+Slider(Tab2, "最大血量", 0, 200, 100, function(value)
     pcall(function()
         setHealth(value)
         WindNotify.Info("血量设置为: " .. value)
