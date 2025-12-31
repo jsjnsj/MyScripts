@@ -578,7 +578,7 @@ UIG.Parent = Open
           SectionOpened.BackgroundTransparency = 1.000
           SectionOpened.BorderSizePixel = 0
           SectionOpened.Size = UDim2.new(0, 26, 0, 26)
-          SectionOpened.Image = "rbxassetid://18941716391"
+          SectionOpened.Image = "rbxassetid://104348512692738"
           SectionOpened.ImageTransparency = 1.000
     
           SectionToggle.Name = "SectionToggle"
