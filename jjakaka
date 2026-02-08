@@ -1224,9 +1224,9 @@ RunService.RenderStepped:Connect(function()
     end
 end)
 
-local Skwllli = Tabs.Geasly:AddLeftGroupbox("透视")
+local Skwllli = Geasly:AddLeftGroupbox("透视")
 
-local PlayerESPToggle = Geasly:AddToggle("PlayerESP", {
+local PlayerESPToggle = Skwllli:AddToggle("PlayerESP", {  
     Text = "透视可关",
     Default = false
 })
@@ -1251,13 +1251,13 @@ local function CreateHighlightForPlayer(player)
         highlight.OutlineColor = Color3.fromRGB(255, 255, 255) -- 白色边框
         highlight.FillTransparency = 0.5
         highlight.OutlineTransparency = 0
-        highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop -- 穿墙可见
+        highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
         highlight.Parent = character
         
         playerHighlights[player] = highlight
         
         character.AncestryChanged:Connect(function()
-            if not character:IsDescendantOf(game) then
+            if not character:IsDescendantOf(Workspace) then
                 if playerHighlights[player] then
                     playerHighlights[player]:Destroy()
                     playerHighlights[player] = nil
@@ -1297,16 +1297,18 @@ PlayerESPToggle:OnChanged(function()
             -- 监听角色重生
             for _, player in ipairs(Players:GetPlayers()) do
                 if player ~= LocalPlayer then
-                    player.CharacterAdded:Connect(function()
+                    table.insert(espConnections, player.CharacterAdded:Connect(function()
                         if PlayerESPToggle.Value then
                             task.wait(0.5)
                             CreateHighlightForPlayer(player)
                         end
-                    end)
+                    end))
                 end
             end
             
-            Library:Notify("透视已开启！", 3)
+            if Library then
+                Library:Notify("透视已开启！", 3)
+            end
         else
             -- 清理
             for _, conn in ipairs(espConnections) do
@@ -1314,7 +1316,9 @@ PlayerESPToggle:OnChanged(function()
             end
             espConnections = {}
             ClearAllHighlights()
-            Library:Notify("透视已关闭！", 2)
+            if Library then
+                Library:Notify("透视已关闭！", 2)
+            end
         end
     end)
 end)
