@@ -1226,7 +1226,7 @@ end)
 
 local Skwllli = Tabs.Geasly:AddLeftGroupbox("透视")
 
-local PlayerESPToggle = Tabs.Geasly:AddToggle("PlayerESP", {
+local PlayerESPToggle = Geasly:AddToggle("PlayerESP", {
     Text = "透视可关",
     Default = false
 })
