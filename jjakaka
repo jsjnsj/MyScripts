@@ -1223,101 +1223,344 @@ RunService.RenderStepped:Connect(function()
         AimAtTarget(target)
     end
 end)
-local jjqjjqkq = Tabs.Geasly:AddLeftGroupbox("透视功能")
 
--- 玩家透视（ESP高亮）
-local jjqjjqkq = Tabs.Geasly:AddToggle("PlayerESP", {
-    Text = "透视可关",
+local espGroup = Tabs.Geasly:AddLeftGroupbox("透视功能")
+
+-- 获取必要的服务
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local RunService = game:GetService("RunService")
+
+-- 玩家透视高亮
+local PlayerESPToggle = espGroup:AddToggle("PlayerESP", {
+    Text = "透视高亮",
     Default = false
 })
 
+-- 显示名字
+local PlayerNameToggle = espGroup:AddToggle("PlayerNameESP", {
+    Text = "显示名字",
+    Default = false
+})
+
+-- 显示血条
+local PlayerHealthToggle = espGroup:AddToggle("PlayerHealthESP", {
+    Text = "显示血条",
+    Default = false
+})
+
+-- 显示位置距离
+local PlayerDistanceToggle = espGroup:AddToggle("PlayerDistanceESP", {
+    Text = "显示距离",
+    Default = false
+})
+
+-- 存储所有连接和物体
 local espConnections = {}
 local playerHighlights = {}
+local playerBillboards = {}  -- 存储所有玩家的显示板
+local healthBars = {}  -- 存储血条
+local distanceDisplays = {}  -- 存储距离显示
 
-local function CreateHighlightForPlayer(player)
-    pcall(function()
-        if player == LocalPlayer then return end
-        
-        local character = player.Character
-        if not character then return end
-        
-        if playerHighlights[player] then
-            playerHighlights[player]:Destroy()
-        end
-        
-        local highlight = Instance.new("Highlight")
-        highlight.Name = "PlayerESP"
-        highlight.FillColor = Color3.fromRGB(255, 0, 255) -- 紫色
-        highlight.OutlineColor = Color3.fromRGB(255, 255, 255) -- 白色边框
-        highlight.FillTransparency = 0.5
-        highlight.OutlineTransparency = 0
-        highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop -- 穿墙可见
-        highlight.Parent = character
-        
-        playerHighlights[player] = highlight
-        
-        character.AncestryChanged:Connect(function()
-            if not character:IsDescendantOf(game) then
-                if playerHighlights[player] then
-                    playerHighlights[player]:Destroy()
-                    playerHighlights[player] = nil
-                end
-            end
-        end)
-    end)
-end
-
-local function ClearAllHighlights()
+-- 清理所有ESP
+local function ClearAllESP()
+    -- 清理高亮
     for player, highlight in pairs(playerHighlights) do
         if highlight then
             highlight:Destroy()
         end
     end
     playerHighlights = {}
+    
+    -- 清理显示板
+    for player, billboard in pairs(playerBillboards) do
+        if billboard then
+            billboard:Destroy()
+        end
+    end
+    playerBillboards = {}
+    
+    -- 清理血条
+    for player, bar in pairs(healthBars) do
+        if bar then
+            bar:Destroy()
+        end
+    end
+    healthBars = {}
+    
+    -- 清理距离显示
+    for player, display in pairs(distanceDisplays) do
+        if display then
+            display:Destroy()
+        end
+    end
+    distanceDisplays = {}
+    
+    -- 清理连接
+    for _, conn in ipairs(espConnections) do
+        if conn then
+            conn:Disconnect()
+        end
+    end
+    espConnections = {}
 end
 
-PlayerESPToggle:OnChanged(function()
+-- 创建完整的ESP
+local function CreateESPForPlayer(player)
     pcall(function()
+        if player == LocalPlayer then return end
+        
+        local character = player.Character
+        if not character then
+            -- 如果还没有角色，等待角色生成
+            character = player.CharacterAdded:Wait()
+        end
+        
+        -- 等待必要的部件
+        local humanoidRootPart = character:WaitForChild("HumanoidRootPart", 5)
+        if not humanoidRootPart then return end
+        
+        local humanoid = character:FindFirstChildOfClass("Humanoid")
+        if not humanoid then return end
+        
+        -- 1. 高亮功能
         if PlayerESPToggle.Value then
-            -- 为所有玩家创建高亮
-            for _, player in ipairs(Players:GetPlayers()) do
-                task.spawn(function()
-                    CreateHighlightForPlayer(player)
+            if playerHighlights[player] then
+                playerHighlights[player]:Destroy()
+            end
+            
+            local highlight = Instance.new("Highlight")
+            highlight.Name = "PlayerESP"
+            highlight.FillColor = Color3.fromRGB(255, 0, 255) -- 紫色
+            highlight.OutlineColor = Color3.fromRGB(255, 255, 255) -- 白色边框
+            highlight.FillTransparency = 0.5
+            highlight.OutlineTransparency = 0
+            highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+            highlight.Adornee = character
+            highlight.Parent = character
+            
+            playerHighlights[player] = highlight
+        end
+        
+        -- 2. 创建显示板（用于名字、血条、距离）
+        if PlayerNameToggle.Value or PlayerHealthToggle.Value or PlayerDistanceToggle.Value then
+            if playerBillboards[player] then
+                playerBillboards[player]:Destroy()
+            end
+            
+            local billboardGui = Instance.new("BillboardGui")
+            billboardGui.Name = "PlayerESP_Billboard"
+            billboardGui.Size = UDim2.new(0, 200, 0, 100)
+            billboardGui.AlwaysOnTop = true
+            billboardGui.ClipsDescendants = false
+            billboardGui.MaxDistance = 1000
+            billboardGui.SizeOffset = Vector2.new(0, 3)  -- 在玩家头顶显示
+            billboardGui.Adornee = humanoidRootPart
+            billboardGui.Parent = humanoidRootPart
+            
+            playerBillboards[player] = billboardGui
+            
+            local container = Instance.new("Frame")
+            container.Name = "ESP_Container"
+            container.BackgroundTransparency = 1
+            container.Size = UDim2.new(1, 0, 1, 0)
+            container.Parent = billboardGui
+            
+            -- 名字显示
+            if PlayerNameToggle.Value then
+                local nameLabel = Instance.new("TextLabel")
+                nameLabel.Name = "PlayerName"
+                nameLabel.Text = player.Name
+                nameLabel.Size = UDim2.new(1, 0, 0, 20)
+                nameLabel.Position = UDim2.new(0, 0, 0, 0)
+                nameLabel.BackgroundTransparency = 1
+                nameLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+                nameLabel.TextStrokeTransparency = 0.5
+                nameLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+                nameLabel.TextScaled = true
+                nameLabel.Font = Enum.Font.GothamBold
+                nameLabel.Parent = container
+            end
+            
+            -- 血条显示
+            if PlayerHealthToggle.Value then
+                local healthBarContainer = Instance.new("Frame")
+                healthBarContainer.Name = "HealthBarContainer"
+                healthBarContainer.Size = UDim2.new(1, 0, 0, 10)
+                healthBarContainer.Position = UDim2.new(0, 0, 0, 25)
+                healthBarContainer.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+                healthBarContainer.BackgroundTransparency = 0.3
+                healthBarContainer.Parent = container
+                
+                local healthBar = Instance.new("Frame")
+                healthBar.Name = "HealthBar"
+                healthBar.Size = UDim2.new(humanoid.Health / humanoid.MaxHealth, 0, 1, 0)
+                healthBar.BackgroundColor3 = Color3.fromRGB(0, 255, 0)  -- 绿色
+                healthBar.BorderSizePixel = 0
+                healthBar.Parent = healthBarContainer
+                
+                healthBars[player] = {
+                    container = healthBarContainer,
+                    bar = healthBar,
+                    humanoid = humanoid
+                }
+                
+                -- 监听血量变化
+                table.insert(espConnections, humanoid.HealthChanged:Connect(function()
+                    if healthBars[player] and healthBars[player].bar then
+                        healthBars[player].bar.Size = UDim2.new(
+                            humanoid.Health / humanoid.MaxHealth, 
+                            0, 
+                            1, 
+                            0
+                        )
+                        -- 根据血量改变颜色
+                        local healthPercent = humanoid.Health / humanoid.MaxHealth
+                        if healthPercent > 0.5 then
+                            healthBar.BackgroundColor3 = Color3.fromRGB(0, 255, 0)  -- 绿色
+                        elseif healthPercent > 0.25 then
+                            healthBar.BackgroundColor3 = Color3.fromRGB(255, 255, 0)  -- 黄色
+                        else
+                            healthBar.BackgroundColor3 = Color3.fromRGB(255, 0, 0)  -- 红色
+                        end
+                    end
+                end))
+            end
+            
+            -- 距离显示
+            if PlayerDistanceToggle.Value then
+                local distanceLabel = Instance.new("TextLabel")
+                distanceLabel.Name = "PlayerDistance"
+                distanceLabel.Size = UDim2.new(1, 0, 0, 20)
+                distanceLabel.Position = UDim2.new(0, 0, 0, 40)
+                distanceLabel.BackgroundTransparency = 1
+                distanceLabel.TextColor3 = Color3.fromRGB(0, 255, 255)  -- 青色
+                distanceLabel.TextStrokeTransparency = 0.5
+                distanceLabel.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+                distanceLabel.TextScaled = true
+                distanceLabel.Font = Enum.Font.Gotham
+                distanceLabel.Parent = container
+                
+                distanceDisplays[player] = distanceLabel
+            end
+        end
+        
+        -- 监听角色移除
+        character.AncestryChanged:Connect(function()
+            if not character:IsDescendantOf(game) then
+                if playerHighlights[player] then
+                    playerHighlights[player]:Destroy()
+                    playerHighlights[player] = nil
+                end
+                if playerBillboards[player] then
+                    playerBillboards[player]:Destroy()
+                    playerBillboards[player] = nil
+                end
+                if healthBars[player] then
+                    healthBars[player] = nil
+                end
+                if distanceDisplays[player] then
+                    distanceDisplays[player] = nil
+                end
+            end
+        end)
+    end)
+end
+
+-- 更新距离显示
+local function UpdateDistances()
+    for player, distanceLabel in pairs(distanceDisplays) do
+        pcall(function()
+            if player and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+                local targetHRP = player.Character.HumanoidRootPart
+                local localHRP = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+                
+                if targetHRP and localHRP then
+                    local distance = (targetHRP.Position - localHRP.Position).Magnitude
+                    distanceLabel.Text = string.format("%.1f 米", distance)
+                end
+            end
+        end)
+    end
+end
+
+-- 主控制函数
+local function ManageESP()
+    ClearAllESP()
+    
+    if PlayerESPToggle.Value or PlayerNameToggle.Value or PlayerHealthToggle.Value or PlayerDistanceToggle.Value then
+        -- 为所有玩家创建ESP
+        for _, player in ipairs(Players:GetPlayers()) do
+            task.spawn(function()
+                if PlayerESPToggle.Value or PlayerNameToggle.Value or PlayerHealthToggle.Value or PlayerDistanceToggle.Value then
+                    CreateESPForPlayer(player)
+                end
+            end)
+        end
+        
+        -- 监听新玩家加入
+        table.insert(espConnections, Players.PlayerAdded:Connect(function(player)
+            task.wait(2)  -- 等待角色加载
+            if PlayerESPToggle.Value or PlayerNameToggle.Value or PlayerHealthToggle.Value or PlayerDistanceToggle.Value then
+                CreateESPForPlayer(player)
+            end
+        end))
+        
+        -- 监听玩家离开
+        table.insert(espConnections, Players.PlayerRemoving:Connect(function(player)
+            if playerHighlights[player] then
+                playerHighlights[player]:Destroy()
+                playerHighlights[player] = nil
+            end
+            if playerBillboards[player] then
+                playerBillboards[player]:Destroy()
+                playerBillboards[player] = nil
+            end
+        end))
+        
+        -- 监听角色重生
+        for _, player in ipairs(Players:GetPlayers()) do
+            if player ~= LocalPlayer then
+                player.CharacterAdded:Connect(function(character)
+                    task.wait(1)  -- 等待角色完全加载
+                    if PlayerESPToggle.Value or PlayerNameToggle.Value or PlayerHealthToggle.Value or PlayerDistanceToggle.Value then
+                        CreateESPForPlayer(player)
+                    end
                 end)
             end
-            
-            -- 监听新玩家
-            table.insert(espConnections, Players.PlayerAdded:Connect(function(player)
-                if PlayerESPToggle.Value then
-                    task.wait(1)
-                    CreateHighlightForPlayer(player)
-                end
-            end))
-            
-            -- 监听角色重生
-            for _, player in ipairs(Players:GetPlayers()) do
-                if player ~= LocalPlayer then
-                    player.CharacterAdded:Connect(function()
-                        if PlayerESPToggle.Value then
-                            task.wait(0.5)
-                            CreateHighlightForPlayer(player)
-                        end
-                    end)
-                end
-            end
-            
-            Library:Notify("透视已开启！", 3)
-        else
-            -- 清理
-            for _, conn in ipairs(espConnections) do
-                if conn then conn:Disconnect() end
-            end
-            espConnections = {}
-            ClearAllHighlights()
-            Library:Notify("透视已关闭！", 2)
         end
-    end)
+        
+        -- 为距离显示创建更新循环
+        if PlayerDistanceToggle.Value then
+            table.insert(espConnections, RunService.RenderStepped:Connect(function()
+                UpdateDistances()
+            end))
+        end
+        
+        Library:Notify("透视已开启！", 3)
+    else
+        ClearAllESP()
+        Library:Notify("透视已关闭！", 2)
+    end
+end
+
+-- 绑定所有开关
+PlayerESPToggle:OnChanged(function()
+    ManageESP()
 end)
+
+PlayerNameToggle:OnChanged(function()
+    ManageESP()
+end)
+
+PlayerHealthToggle:OnChanged(function()
+    ManageESP()
+end)
+
+PlayerDistanceToggle:OnChanged(function()
+    ManageESP()
+end)
+
 
 -- ========== 旋转页 ==========
 local SpinGroup = Tabs.Spin:AddLeftGroupbox("旋转控制")
