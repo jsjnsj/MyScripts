@@ -21,7 +21,7 @@ local Window = Library:CreateWindow({
 -- ========== 简化标签页结构 ==========
 local Tabs = {}
 Tabs.General = Window:AddTab("通用", "user")
-Tabs.Geasll = Window:AddTab("自瞄", "House")
+Tabs.Geasll = Window:AddTab("自瞄", "door-open")
 Tabs.Spin = Window:AddTab("旋转", "star")
 Tabs.UISettings = Window:AddTab("UI设置", "settings")
 
