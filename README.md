@@ -1,0 +1,1376 @@
+-- ========== 等待游戏完全加载 ==========
+if not game:IsLoaded() then game.Loaded:Wait() end
+
+local Players = game:GetService("Players")
+repeat task.wait() until Players.LocalPlayer
+local LocalPlayer = Players.LocalPlayer
+
+-- ========== 加载库 ==========
+local repo = "https://raw.githubusercontent.com/ATLASTEAM01/Obsidian/main/"
+local Library = loadstring(game:HttpGet(repo .. "Library.lua"))()
+local ThemeManager = loadstring(game:HttpGet(repo .. "addons/ThemeManager.lua"))()
+local SaveManager = loadstring(game:HttpGet(repo .. "addons/SaveManager.lua"))()
+
+local Window = Library:CreateWindow({
+    Title = "脚本",
+    Footer = "作者:蟑螂黑的要死 | 0.1",
+    Center = true,
+    AutoShow = true
+})
+
+-- ========== 简化标签页结构 ==========
+local Tabs = {}
+Tabs.General = Window:AddTab("通用", "user")
+Tabs.Geasll = Window:AddTab("自瞄", "House")
+Tabs.Spin = Window:AddTab("旋转", "star")
+Tabs.UISettings = Window:AddTab("UI设置", "settings")
+
+local PlayerGroup = Tabs.General:AddLeftGroupbox("玩家设置")
+
+PlayerGroup:AddButton("飞行", function()
+    -- 如果飞行UI已存在，先销毁
+    local existingGUI = LocalPlayer.PlayerGui:FindFirstChild("main")
+    if existingGUI then
+        existingGUI:Destroy()
+    end
+    
+    -- 创建飞行UI
+    local main = Instance.new("ScreenGui")
+    local Frame = Instance.new("Frame")
+    local up = Instance.new("TextButton")
+    local down = Instance.new("TextButton")
+    local onof = Instance.new("TextButton")
+    local TextLabel = Instance.new("TextLabel")
+    local plus = Instance.new("TextButton")
+    local speed = Instance.new("TextLabel")
+    local mine = Instance.new("TextButton")
+    local closebutton = Instance.new("TextButton")
+    local mini = Instance.new("TextButton")
+    local mini2 = Instance.new("TextButton")
+
+    main.Name = "main"
+    main.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+    main.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+    main.ResetOnSpawn = false
+
+    Frame.Parent = main
+    Frame.BackgroundColor3 = Color3.fromRGB(163, 255, 137)
+    Frame.BorderColor3 = Color3.fromRGB(103, 221, 213)
+    Frame.Position = UDim2.new(0.100320168, 0, 0.379746825, 0)
+    Frame.Size = UDim2.new(0, 190, 0, 57)
+
+    up.Name = "up"
+    up.Parent = Frame
+    up.BackgroundColor3 = Color3.fromRGB(79, 255, 152)
+    up.Size = UDim2.new(0, 44, 0, 28)
+    up.Font = Enum.Font.SourceSans
+    up.Text = "上"
+    up.TextColor3 = Color3.fromRGB(0, 0, 0)
+    up.TextSize = 14.000
+
+    down.Name = "down"
+    down.Parent = Frame
+    down.BackgroundColor3 = Color3.fromRGB(215, 255, 121)
+    down.Position = UDim2.new(0, 0, 0.491228074, 0)
+    down.Size = UDim2.new(0, 44, 0, 28)
+    down.Font = Enum.Font.SourceSans
+    down.Text = "下"
+    down.TextColor3 = Color3.fromRGB(0, 0, 0)
+    down.TextSize = 14.000
+
+    onof.Name = "onof"
+    onof.Parent = Frame
+    onof.BackgroundColor3 = Color3.fromRGB(255, 249, 74)
+    onof.Position = UDim2.new(0.702823281, 0, 0.491228074, 0)
+    onof.Size = UDim2.new(0, 56, 0, 28)
+    onof.Font = Enum.Font.SourceSans
+    onof.Text = "飞行"
+    onof.TextColor3 = Color3.fromRGB(0, 0, 0)
+    onof.TextSize = 14.000
+
+    TextLabel.Parent = Frame
+    TextLabel.BackgroundColor3 = Color3.fromRGB(242, 60, 255)
+    TextLabel.Position = UDim2.new(0.469327301, 0, 0, 0)
+    TextLabel.Size = UDim2.new(0, 100, 0, 28)
+    TextLabel.Font = Enum.Font.SourceSans
+    TextLabel.Text = "飞行脚本"
+    TextLabel.TextColor3 = Color3.fromRGB(0, 0, 0)
+    TextLabel.TextScaled = true
+    TextLabel.TextSize = 14.000
+    TextLabel.TextWrapped = true
+
+    plus.Name = "plus"
+    plus.Parent = Frame
+    plus.BackgroundColor3 = Color3.fromRGB(133, 145, 255)
+    plus.Position = UDim2.new(0.231578946, 0, 0, 0)
+    plus.Size = UDim2.new(0, 45, 0, 28)
+    plus.Font = Enum.Font.SourceSans
+    plus.Text = "+"
+    plus.TextColor3 = Color3.fromRGB(0, 0, 0)
+    plus.TextScaled = true
+    plus.TextSize = 14.000
+    plus.TextWrapped = true
+
+    speed.Name = "speed"
+    speed.Parent = Frame
+    speed.BackgroundColor3 = Color3.fromRGB(255, 85, 0)
+    speed.Position = UDim2.new(0.468421042, 0, 0.491228074, 0)
+    speed.Size = UDim2.new(0, 44, 0, 28)
+    speed.Font = Enum.Font.SourceSans
+    speed.Text = "1"
+    speed.TextColor3 = Color3.fromRGB(0, 0, 0)
+    speed.TextScaled = true
+    speed.TextSize = 14.000
+    speed.TextWrapped = true
+
+    mine.Name = "mine"
+    mine.Parent = Frame
+    mine.BackgroundColor3 = Color3.fromRGB(123, 255, 247)
+    mine.Position = UDim2.new(0.231578946, 0, 0.491228074, 0)
+    mine.Size = UDim2.new(0, 45, 0, 29)
+    mine.Font = Enum.Font.SourceSans
+    mine.Text = "-"
+    mine.TextColor3 = Color3.fromRGB(0, 0, 0)
+    mine.TextScaled = true
+    mine.TextSize = 14.000
+    mine.TextWrapped = true
+
+    closebutton.Name = "Close"
+    closebutton.Parent = main.Frame
+    closebutton.BackgroundColor3 = Color3.fromRGB(225, 25, 0)
+    closebutton.Font = "SourceSans"
+    closebutton.Size = UDim2.new(0, 45, 0, 28)
+    closebutton.Text = "关闭"
+    closebutton.TextSize = 30
+    closebutton.Position =  UDim2.new(0, 0, -1, 27)
+
+    mini.Name = "minimize"
+    mini.Parent = main.Frame
+    mini.BackgroundColor3 = Color3.fromRGB(192, 150, 230)
+    mini.Font = "SourceSans"
+    mini.Size = UDim2.new(0, 45, 0, 28)
+    mini.Text = "隐藏"
+    mini.TextSize = 40
+    mini.Position = UDim2.new(0, 44, -1, 27)
+
+    mini2.Name = "minimize2"
+    mini2.Parent = main.Frame
+    mini2.BackgroundColor3 = Color3.fromRGB(192, 150, 230)
+    mini2.Font = "SourceSans"
+    mini2.Size = UDim2.new(0, 45, 0, 28)
+    mini2.Text = "+"
+    mini2.TextSize = 40
+    mini2.Position = UDim2.new(0, 44, -1, 57)
+    mini2.Visible = false
+
+    speeds = 1
+
+    local speaker = game:GetService("Players").LocalPlayer
+
+    local chr = game.Players.LocalPlayer.Character
+    local hum = chr and chr:FindFirstChildWhichIsA("Humanoid")
+
+    nowe = false
+
+    game:GetService("StarterGui"):SetCore("SendNotification", { 
+        Title = "Fly GUI V3";
+        Text = "By me_ozone and Quandale The Dinglish XII#3550";
+        Icon = "rbxthumb://type=Asset&id=5107182114&w=150&h=150"})
+    Duration = 5;
+
+    Frame.Active = true -- main = gui
+    Frame.Draggable = true
+
+    onof.MouseButton1Down:Connect(function()
+
+        if nowe == true then
+            nowe = false
+
+            speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Climbing,true)
+            speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.FallingDown,true)
+            speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Flying,true)
+            speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Freefall,true)
+            speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.GettingUp,true)
+            speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Jumping,true)
+            speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Landed,true)
+            speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Physics,true)
+            speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.PlatformStanding,true)
+            speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Ragdoll,true)
+            speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Running,true)
+            speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.RunningNoPhysics,true)
+            speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated,true)
+            speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.StrafingNoPhysics,true)
+            speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Swimming,true)
+            speaker.Character.Humanoid:ChangeState(Enum.HumanoidStateType.RunningNoPhysics)
+        else 
+            nowe = true
+
+            for i = 1, speeds do
+                spawn(function()
+
+                    local hb = game:GetService("RunService").Heartbeat	
+
+
+                    tpwalking = true
+                    local chr = game.Players.LocalPlayer.Character
+                    local hum = chr and chr:FindFirstChildWhichIsA("Humanoid")
+                    while tpwalking and hb:Wait() and chr and hum and hum.Parent do
+                        if hum.MoveDirection.Magnitude > 0 then
+                            chr:TranslateBy(hum.MoveDirection)
+                        end
+                    end
+
+                end)
+            end
+            game.Players.LocalPlayer.Character.Animate.Disabled = true
+            local Char = game.Players.LocalPlayer.Character
+            local Hum = Char:FindFirstChildOfClass("Humanoid") or Char:FindFirstChildOfClass("AnimationController")
+
+            for i,v in next, Hum:GetPlayingAnimationTracks() do
+                v:AdjustSpeed(0)
+            end
+            speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Climbing,false)
+            speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.FallingDown,false)
+            speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Flying,false)
+            speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Freefall,false)
+            speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.GettingUp,false)
+            speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Jumping,false)
+            speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Landed,false)
+            speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Physics,false)
+            speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.PlatformStanding,false)
+            speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Ragdoll,false)
+            speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Running,false)
+            speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.RunningNoPhysics,false)
+            speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated,false)
+            speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.StrafingNoPhysics,false)
+            speaker.Character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Swimming,false)
+            speaker.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Swimming)
+        end
+
+        if game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Humanoid").RigType == Enum.HumanoidRigType.R6 then
+
+            local plr = game.Players.LocalPlayer
+            local torso = plr.Character.Torso
+            local flying = true
+            local deb = true
+            local ctrl = {f = 0, b = 0, l = 0, r = 0}
+            local lastctrl = {f = 0, b = 0, l = 0, r = 0}
+            local maxspeed = 50
+            local speed = 0
+
+            local bg = Instance.new("BodyGyro", torso)
+            bg.P = 9e4
+            bg.maxTorque = Vector3.new(9e9, 9e9, 9e9)
+            bg.cframe = torso.CFrame
+            local bv = Instance.new("BodyVelocity", torso)
+            bv.velocity = Vector3.new(0,0.1,0)
+            bv.maxForce = Vector3.new(9e9, 9e9, 9e9)
+            if nowe == true then
+                plr.Character.Humanoid.PlatformStand = true
+            end
+            while nowe == true or game:GetService("Players").LocalPlayer.Character.Humanoid.Health == 0 do
+                game:GetService("RunService").RenderStepped:Wait()
+
+                if ctrl.l + ctrl.r ~= 0 or ctrl.f + ctrl.b ~= 0 then
+                    speed = speed+.5+(speed/maxspeed)
+                    if speed > maxspeed then
+                        speed = maxspeed
+                    end
+                elseif not (ctrl.l + ctrl.r ~= 0 or ctrl.f + ctrl.b ~= 0) and speed ~= 0 then
+                    speed = speed-1
+                    if speed < 0 then
+                        speed = 0
+                    end
+                end
+                if (ctrl.l + ctrl.r) ~= 0 or (ctrl.f + ctrl.b) ~= 0 then
+                    bv.velocity = ((game.Workspace.CurrentCamera.CoordinateFrame.lookVector * (ctrl.f+ctrl.b)) + ((game.Workspace.CurrentCamera.CoordinateFrame * CFrame.new(ctrl.l+ctrl.r,(ctrl.f+ctrl.b)*.2,0).p) - game.Workspace.CurrentCamera.CoordinateFrame.p))*speed
+                    lastctrl = {f = ctrl.f, b = ctrl.b, l = ctrl.l, r = ctrl.r}
+                elseif (ctrl.l + ctrl.r) == 0 and (ctrl.f + ctrl.b) == 0 and speed ~= 0 then
+                    bv.velocity = ((game.Workspace.CurrentCamera.CoordinateFrame.lookVector * (lastctrl.f+lastctrl.b)) + ((game.Workspace.CurrentCamera.CoordinateFrame * CFrame.new(lastctrl.l+lastctrl.r,(lastctrl.f+lastctrl.b)*.2,0).p) - game.Workspace.CurrentCamera.CoordinateFrame.p))*speed
+                else
+                    bv.velocity = Vector3.new(0,0,0)
+                end
+                --	game.Players.LocalPlayer.Character.Animate.Disabled = true
+                bg.cframe = game.Workspace.CurrentCamera.CoordinateFrame * CFrame.Angles(-math.rad((ctrl.f+ctrl.b)*50*speed/maxspeed),0,0)
+            end
+            ctrl = {f = 0, b = 0, l = 0, r = 0}
+            lastctrl = {f = 0, b = 0, l = 0, r = 0}
+            speed = 0
+            bg:Destroy()
+            bv:Destroy()
+            plr.Character.Humanoid.PlatformStand = false
+            game.Players.LocalPlayer.Character.Animate.Disabled = false
+            tpwalking = false
+
+        else
+            local plr = game.Players.LocalPlayer
+            local UpperTorso = plr.Character.UpperTorso
+            local flying = true
+            local deb = true
+            local ctrl = {f = 0, b = 0, l = 0, r = 0}
+            local lastctrl = {f = 0, b = 0, l = 0, r = 0}
+            local maxspeed = 50
+            local speed = 0
+
+            local bg = Instance.new("BodyGyro", UpperTorso)
+            bg.P = 9e4
+            bg.maxTorque = Vector3.new(9e9, 9e9, 9e9)
+            bg.cframe = UpperTorso.CFrame
+            local bv = Instance.new("BodyVelocity", UpperTorso)
+            bv.velocity = Vector3.new(0,0.1,0)
+            bv.maxForce = Vector3.new(9e9, 9e9, 9e9)
+            if nowe == true then
+                plr.Character.Humanoid.PlatformStand = true
+            end
+            while nowe == true or game:GetService("Players").LocalPlayer.Character.Humanoid.Health == 0 do
+                wait()
+
+                if ctrl.l + ctrl.r ~= 0 or ctrl.f + ctrl.b ~= 0 then
+                    speed = speed+.5+(speed/maxspeed)
+                    if speed > maxspeed then
+                        speed = maxspeed
+                    end
+                elseif not (ctrl.l + ctrl.r ~= 0 or ctrl.f + ctrl.b ~= 0) and speed ~= 0 then
+                    speed = speed-1
+                    if speed < 0 then
+                        speed = 0
+                    end
+                end
+                if (ctrl.l + ctrl.r) ~= 0 or (ctrl.f + ctrl.b) ~= 0 then
+                    bv.velocity = ((game.Workspace.CurrentCamera.CoordinateFrame.lookVector * (ctrl.f+ctrl.b)) + ((game.Workspace.CurrentCamera.CoordinateFrame * CFrame.new(ctrl.l+ctrl.r,(ctrl.f+ctrl.b)*.2,0).p) - game.Workspace.CurrentCamera.CoordinateFrame.p))*speed
+                    lastctrl = {f = ctrl.f, b = ctrl.b, l = ctrl.l, r = ctrl.r}
+                elseif (ctrl.l + ctrl.r) == 0 and (ctrl.f + ctrl.b) == 0 and speed ~= 0 then
+                    bv.velocity = ((game.Workspace.CurrentCamera.CoordinateFrame.lookVector * (lastctrl.f+lastctrl.b)) + ((game.Workspace.CurrentCamera.CoordinateFrame * CFrame.new(lastctrl.l+lastctrl.r,(lastctrl.f+lastctrl.b)*.2,0).p) - game.Workspace.CurrentCamera.CoordinateFrame.p))*speed
+                else
+                    bv.velocity = Vector3.new(0,0,0)
+                end
+
+                bg.cframe = game.Workspace.CurrentCamera.CoordinateFrame * CFrame.Angles(-math.rad((ctrl.f+ctrl.b)*50*speed/maxspeed),0,0)
+            end
+            ctrl = {f = 0, b = 0, l = 0, r = 0}
+            lastctrl = {f = 0, b = 0, l = 0, r = 0}
+            speed = 0
+            bg:Destroy()
+            bv:Destroy()
+            plr.Character.Humanoid.PlatformStand = false
+            game.Players.LocalPlayer.Character.Animate.Disabled = false
+            tpwalking = false
+
+        end
+    end)
+
+    local tis
+
+    up.MouseButton1Down:Connect(function()
+        tis = up.MouseEnter:Connect(function()
+            while tis do
+                wait()
+                game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame * CFrame.new(0,1,0)
+            end
+        end)
+    end)
+
+    up.MouseLeave:Connect(function()
+        if tis then
+            tis:Disconnect()
+            tis = nil
+        end
+    end)
+
+    local dis
+
+    down.MouseButton1Down:Connect(function()
+        dis = down.MouseEnter:Connect(function()
+            while dis do
+                wait()
+                game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame * CFrame.new(0,-1,0)
+            end
+        end)
+    end)
+
+    down.MouseLeave:Connect(function()
+        if dis then
+            dis:Disconnect()
+            dis = nil
+        end
+    end)
+
+    game:GetService("Players").LocalPlayer.CharacterAdded:Connect(function(char)
+        wait(0.7)
+        game.Players.LocalPlayer.Character.Humanoid.PlatformStand = false
+        game.Players.LocalPlayer.Character.Animate.Disabled = false
+    end)
+
+    plus.MouseButton1Down:Connect(function()
+        speeds = speeds + 1
+        speed.Text = speeds
+        if nowe == true then
+            tpwalking = false
+            for i = 1, speeds do
+                spawn(function()
+                    local hb = game:GetService("RunService").Heartbeat	
+                    tpwalking = true
+                    local chr = game.Players.LocalPlayer.Character
+                    local hum = chr and chr:FindFirstChildWhichIsA("Humanoid")
+                    while tpwalking and hb:Wait() and chr and hum and hum.Parent do
+                        if hum.MoveDirection.Magnitude > 0 then
+                            chr:TranslateBy(hum.MoveDirection)
+                        end
+                    end
+                end)
+            end
+        end
+    end)
+    
+    mine.MouseButton1Down:Connect(function()
+        if speeds == 1 then
+            speed.Text = 'cannot be less than 1'
+            wait(1)
+            speed.Text = speeds
+        else
+            speeds = speeds - 1
+            speed.Text = speeds
+            if nowe == true then
+                tpwalking = false
+                for i = 1, speeds do
+                    spawn(function()
+                        local hb = game:GetService("RunService").Heartbeat	
+                        tpwalking = true
+                        local chr = game.Players.LocalPlayer.Character
+                        local hum = chr and chr:FindFirstChildWhichIsA("Humanoid")
+                        while tpwalking and hb:Wait() and chr and hum and hum.Parent do
+                            if hum.MoveDirection.Magnitude > 0 then
+                                chr:TranslateBy(hum.MoveDirection)
+                            end
+                        end
+                    end)
+                end
+            end
+        end
+    end)
+
+    closebutton.MouseButton1Click:Connect(function()
+        main:Destroy()
+    end)
+
+    mini.MouseButton1Click:Connect(function()
+        up.Visible = false
+        down.Visible = false
+        onof.Visible = false
+        plus.Visible = false
+        speed.Visible = false
+        mine.Visible = false
+        mini.Visible = false
+        mini2.Visible = true
+        main.Frame.BackgroundTransparency = 1
+        closebutton.Position =  UDim2.new(0, 0, -1, 57)
+    end)
+
+    mini2.MouseButton1Click:Connect(function()
+        up.Visible = true
+        down.Visible = true
+        onof.Visible = true
+        plus.Visible = true
+        speed.Visible = true
+        mine.Visible = true
+        mini.Visible = true
+        mini2.Visible = false
+        main.Frame.BackgroundTransparency = 0 
+        closebutton.Position =  UDim2.new(0, 0, -1, 27)
+    end)
+end)
+
+-- 移动速度
+local WalkSpeedSlider = PlayerGroup:AddSlider("WalkSpeed", {
+    Text = "移动速度",
+    Min = 16, Max = 200, Default = 16, Rounding = 0
+})
+WalkSpeedSlider:OnChanged(function(value)
+    local character = LocalPlayer.Character
+    if character and character:FindFirstChildOfClass("Humanoid") then
+        character:FindFirstChildOfClass("Humanoid").WalkSpeed = value
+    end
+end)
+
+-- 跳跃高度
+local JumpPowerSlider = PlayerGroup:AddSlider("JumpPower", {
+    Text = "跳跃高度",
+    Min = 50, Max = 200, Default = 50, Rounding = 0
+})
+JumpPowerSlider:OnChanged(function(value)
+    local character = LocalPlayer.Character
+    if character and character:FindFirstChildOfClass("Humanoid") then
+        character:FindFirstChildOfClass("Humanoid").JumpPower = value
+    end
+end)
+
+-- 夜视、穿墙、无限跳跃
+-- 在顶部初始化区域添加以下变量
+local nightvisLight = nil
+local nightvisConnection = nil
+local noclipConn = nil
+local infJumpConn = nil
+local Lighting = game:GetService("Lighting")
+
+-- 修改夜视功能的实现
+
+-- 夜视 - 修复跟随玩家逻辑
+local NightVisionToggle = PlayerGroup:AddToggle("NightVision", {
+    Text = "夜视",
+    Default = false
+})
+
+-- 创建更新夜视光源的函数
+local function UpdateNightVision()
+    if NightVisionToggle.Value and LocalPlayer.Character then
+        -- 如果光源已存在，先销毁旧的
+        if nightvisLight then nightvisLight:Destroy() end
+        
+        -- 等待角色加载完成
+        local character = LocalPlayer.Character
+        local rootPart = character:WaitForChild("HumanoidRootPart", 3)
+        
+        if rootPart then
+            -- 创建新的点光源并附加到玩家角色
+            nightvisLight = Instance.new("PointLight")
+            nightvisLight.Name = "NightVisionLight"
+            nightvisLight.Range = 200  -- 照明范围
+            nightvisLight.Brightness = 3  -- 亮度
+            nightvisLight.Color = Color3.new(1, 1, 1)  -- 白色光
+            nightvisLight.Shadows = false
+            nightvisLight.Parent = rootPart
+            
+            -- 调整环境光增强夜视效果
+            Lighting.GlobalShadows = false
+            Lighting.Ambient = Color3.new(0.3, 0.3, 0.3)
+            Lighting.OutdoorAmbient = Color3.new(0.6, 0.6, 0.6)
+            Lighting.Brightness = 2
+        end
+    else
+        -- 关闭夜视时清理
+        if nightvisLight then 
+            nightvisLight:Destroy() 
+            nightvisLight = nil
+        end
+        Lighting.GlobalShadows = true
+        Lighting.Ambient = Color3.new(0, 0, 0)
+        Lighting.OutdoorAmbient = Color3.new(0.5, 0.5, 0.5)
+        Lighting.Brightness = 1
+    end
+end
+
+NightVisionToggle:OnChanged(UpdateNightVision)
+
+-- 监听角色变化，确保重生后夜视仍然有效
+LocalPlayer.CharacterAdded:Connect(function()
+    wait(0.5)  -- 等待角色加载
+    if NightVisionToggle.Value then
+        UpdateNightVision()
+    end
+end)
+
+-- 监听角色移除，清理光源
+LocalPlayer.CharacterRemoving:Connect(function()
+    if nightvisLight then
+        nightvisLight:Destroy()
+        nightvisLight = nil
+    end
+end)
+
+
+local NoclipToggle = PlayerGroup:AddToggle("Noclip", {
+    Text = "穿墙",
+    Default = false
+})
+NoclipToggle:OnChanged(function()
+    if NoclipToggle.Value then
+        noclipConn = game:GetService("RunService").Stepped:Connect(function()
+            local character = LocalPlayer.Character
+            if character then
+                for _, part in pairs(character:GetDescendants()) do
+                    if part:IsA("BasePart") then part.CanCollide = false end
+                end
+            end
+        end)
+    else
+        if noclipConn then noclipConn:Disconnect() end
+    end
+end)
+
+local InfJumpToggle = PlayerGroup:AddToggle("InfJump", {
+    Text = "无限跳跃",
+    Default = false
+})
+InfJumpToggle:OnChanged(function()
+    if InfJumpToggle.Value then
+        infJumpConn = game:GetService("UserInputService").JumpRequest:Connect(function()
+            local character = LocalPlayer.Character
+            if character and character:FindFirstChildOfClass("Humanoid") then
+                character:FindFirstChildOfClass("Humanoid"):ChangeState(Enum.HumanoidStateType.Jumping)
+            end
+        end)
+    else
+        if infJumpConn then infJumpConn:Disconnect() end
+    end
+end)
+
+-- 重力调整
+local GravitySlider = PlayerGroup:AddSlider("Gravity", {
+    Text = "重力调整",
+    Min = 0, Max = 500, Default = 196.2, Rounding = 1
+})
+
+GravitySlider:OnChanged(function(value)
+    pcall(function()
+        workspace.Gravity = value
+    end)
+end)
+
+-- 重置重力按钮
+PlayerGroup:AddButton("重置重力", function()
+    pcall(function()
+        workspace.Gravity = 196.2
+        GravitySlider:SetValue(196.2)
+        Library:Notify("重力已重置！", 2)
+    end)
+end)
+
+-- 玩家透视（ESP高亮）
+local PlayerESPToggle = PlayerGroup:AddToggle("PlayerESP", {
+    Text = "透视可关",
+    Default = false
+})
+
+local espConnections = {}
+local playerHighlights = {}
+
+local function CreateHighlightForPlayer(player)
+    pcall(function()
+        if player == LocalPlayer then return end
+        
+        local character = player.Character
+        if not character then return end
+        
+        if playerHighlights[player] then
+            playerHighlights[player]:Destroy()
+        end
+        
+        local highlight = Instance.new("Highlight")
+        highlight.Name = "PlayerESP"
+        highlight.FillColor = Color3.fromRGB(255, 0, 255) -- 紫色
+        highlight.OutlineColor = Color3.fromRGB(255, 255, 255) -- 白色边框
+        highlight.FillTransparency = 0.5
+        highlight.OutlineTransparency = 0
+        highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop -- 穿墙可见
+        highlight.Parent = character
+        
+        playerHighlights[player] = highlight
+        
+        character.AncestryChanged:Connect(function()
+            if not character:IsDescendantOf(game) then
+                if playerHighlights[player] then
+                    playerHighlights[player]:Destroy()
+                    playerHighlights[player] = nil
+                end
+            end
+        end)
+    end)
+end
+
+local function ClearAllHighlights()
+    for player, highlight in pairs(playerHighlights) do
+        if highlight then
+            highlight:Destroy()
+        end
+    end
+    playerHighlights = {}
+end
+
+PlayerESPToggle:OnChanged(function()
+    pcall(function()
+        if PlayerESPToggle.Value then
+            -- 为所有玩家创建高亮
+            for _, player in ipairs(Players:GetPlayers()) do
+                task.spawn(function()
+                    CreateHighlightForPlayer(player)
+                end)
+            end
+            
+            -- 监听新玩家
+            table.insert(espConnections, Players.PlayerAdded:Connect(function(player)
+                if PlayerESPToggle.Value then
+                    task.wait(1)
+                    CreateHighlightForPlayer(player)
+                end
+            end))
+            
+            -- 监听角色重生
+            for _, player in ipairs(Players:GetPlayers()) do
+                if player ~= LocalPlayer then
+                    player.CharacterAdded:Connect(function()
+                        if PlayerESPToggle.Value then
+                            task.wait(0.5)
+                            CreateHighlightForPlayer(player)
+                        end
+                    end)
+                end
+            end
+            
+            Library:Notify("透视已开启！", 3)
+        else
+            -- 清理
+            for _, conn in ipairs(espConnections) do
+                if conn then conn:Disconnect() end
+            end
+            espConnections = {}
+            ClearAllHighlights()
+            Library:Notify("透视已关闭！", 2)
+        end
+    end)
+end)
+
+-- ========== 通用页 - 核心功能 ==========
+local FuncGroup = Tabs.General:AddRightGroupbox("核心功能")
+
+local function ThrowSinglePlayer(targetPlayer)
+    local targetNames = { targetPlayer.Name }
+    local isAllOrOthers = false
+
+    local function FindPlayerByName(name)
+        name = name:lower()
+        if name == "all" or name == "others" then
+            isAllOrOthers = true
+            return
+        end
+        if name == "random" then
+            local allPlayers = Players:GetPlayers()
+            if table.find(allPlayers, LocalPlayer) then
+                table.remove(allPlayers, table.find(allPlayers, LocalPlayer))
+            end
+            return allPlayers[math.random(#allPlayers)]
+        end
+        if name ~= "random" and name ~= "all" and name ~= "others" then
+            for _, player in ipairs(Players:GetPlayers()) do
+                if player ~= LocalPlayer then
+                    if player.Name:lower():match("^" .. name) then
+                        return player
+                    end
+                    if player.DisplayName:lower():match("^" .. name) then
+                        return player
+                    end
+                end
+            end
+        end
+    end
+
+    local function SendNotification(title, text, duration)
+        game:GetService("StarterGui"):SetCore("SendNotification", {
+            Title = title, Text = text, Duration = duration,
+        })
+    end
+
+    local function ThrowPlayer(targetPlayer)
+        local localCharacter = LocalPlayer.Character
+        local localHumanoid = localCharacter and localCharacter:FindFirstChildOfClass("Humanoid")
+        local localRootPart = localHumanoid and localHumanoid.RootPart
+        local targetCharacter = targetPlayer.Character
+        local targetHumanoid = nil
+        local targetRootPart = nil
+        local targetHead = nil
+        local targetAccessory = nil
+        local accessoryHandle = nil
+
+        if targetCharacter:FindFirstChildOfClass("Humanoid") then
+            targetHumanoid = targetCharacter:FindFirstChildOfClass("Humanoid")
+        end
+        if targetHumanoid and targetHumanoid.RootPart then
+            targetRootPart = targetHumanoid.RootPart
+        end
+        if targetCharacter:FindFirstChild("Head") then
+            targetHead = targetCharacter.Head
+        end
+        if targetCharacter:FindFirstChildOfClass("Accessory") then
+            targetAccessory = targetCharacter:FindFirstChildOfClass("Accessory")
+        end
+        if targetAccessory and targetAccessory:FindFirstChild("Handle") then
+            accessoryHandle = targetAccessory.Handle
+        end
+
+        if localCharacter and localHumanoid and localRootPart then
+            if localRootPart.Velocity.Magnitude < 50 then
+                getgenv().OldPos = localRootPart.CFrame
+            end
+            if targetHumanoid and targetHumanoid.Sit and not isAllOrOthers then
+                return SendNotification("玩家消失", "已停止", 5)
+            end
+            if targetHead then
+                workspace.CurrentCamera.CameraSubject = targetHead
+            elseif not targetHead and accessoryHandle then
+                workspace.CurrentCamera.CameraSubject = accessoryHandle
+            elseif targetHumanoid and targetRootPart then
+                workspace.CurrentCamera.CameraSubject = targetHumanoid
+            end
+            if not targetCharacter:FindFirstChildWhichIsA("BasePart") then
+                return
+            end
+
+            local function ApplyThrowForce(part, offset, rotation)
+                localRootPart.CFrame = CFrame.new(part.Position) * offset * rotation
+                localCharacter:SetPrimaryPartCFrame(CFrame.new(part.Position) * offset * rotation)
+                localRootPart.Velocity = Vector3.new(9e7, 9e8, 9e7)
+                localRootPart.RotVelocity = Vector3.new(9e8, 9e8, 9e8)
+            end
+
+            local function PerformThrowAnimation(part)
+                local timeoutDuration = 2
+                local startTime = tick()
+                local rotationAngle = 0
+                while localRootPart do
+                    local velocityMagnitude = part.Velocity.Magnitude
+                    if velocityMagnitude < 50 then
+                        rotationAngle = rotationAngle + 100
+                        ApplyThrowForce(part, CFrame.new(0, 1.5, 0) + targetHumanoid.MoveDirection * part.Velocity.Magnitude / 1.25, CFrame.Angles(math.rad(rotationAngle), 0, 0))
+                        task.wait()
+                        ApplyThrowForce(part, CFrame.new(0, -1.5, 0) + targetHumanoid.MoveDirection * part.Velocity.Magnitude / 1.25, CFrame.Angles(math.rad(rotationAngle), 0, 0))
+                        task.wait()
+                        ApplyThrowForce(part, CFrame.new(2.25, 1.5, -2.25) + targetHumanoid.MoveDirection * part.Velocity.Magnitude / 1.25, CFrame.Angles(math.rad(rotationAngle), 0, 0))
+                        task.wait()
+                        ApplyThrowForce(part, CFrame.new(-2.25, -1.5, 2.25) + targetHumanoid.MoveDirection * part.Velocity.Magnitude / 1.25, CFrame.Angles(math.rad(rotationAngle), 0, 0))
+                        task.wait()
+                        ApplyThrowForce(part, CFrame.new(0, 1.5, 0) + targetHumanoid.MoveDirection, CFrame.Angles(math.rad(rotationAngle), 0, 0))
+                        task.wait()
+                        ApplyThrowForce(part, CFrame.new(0, -1.5, 0) + targetHumanoid.MoveDirection, CFrame.Angles(math.rad(rotationAngle), 0, 0))
+                        task.wait()
+                        ApplyThrowForce(part, CFrame.new(0, 1.5, targetHumanoid.WalkSpeed), CFrame.Angles(math.rad(90), 0, 0))
+                        task.wait()
+                        ApplyThrowForce(part, CFrame.new(0, -1.5, -targetHumanoid.WalkSpeed), CFrame.Angles(0, 0, 0))
+                        task.wait()
+                        ApplyThrowForce(part, CFrame.new(0, 1.5, targetHumanoid.WalkSpeed), CFrame.Angles(math.rad(90), 0, 0))
+                        task.wait()
+                        ApplyThrowForce(part, CFrame.new(0, 1.5, targetRootPart.Velocity.Magnitude / 1.25), CFrame.Angles(math.rad(90), 0, 0))
+                        task.wait()
+                        ApplyThrowForce(part, CFrame.new(0, -1.5, -targetRootPart.Velocity.Magnitude / 1.25), CFrame.Angles(0, 0, 0))
+                        task.wait()
+                        ApplyThrowForce(part, CFrame.new(0, 1.5, targetRootPart.Velocity.Magnitude / 1.25), CFrame.Angles(math.rad(90), 0, 0))
+                        task.wait()
+                        ApplyThrowForce(part, CFrame.new(0, -1.5, 0), CFrame.Angles(math.rad(90), 0, 0))
+                        task.wait()
+                        ApplyThrowForce(part, CFrame.new(0, -1.5, 0), CFrame.Angles(0, 0, 0))
+                        task.wait()
+                        ApplyThrowForce(part, CFrame.new(0, -1.5, 0), CFrame.Angles(math.rad(-90), 0, 0))
+                        task.wait()
+                        ApplyThrowForce(part, CFrame.new(0, -1.5, 0), CFrame.Angles(0, 0, 0))
+                        task.wait()
+                        ApplyThrowForce(part, CFrame.new(0, -1.5, 0), CFrame.Angles(math.rad(-90), 0, 0))
+                        task.wait()
+                    else
+                        ApplyThrowForce(part, CFrame.new(0, 1.5, targetHumanoid.WalkSpeed), CFrame.Angles(math.rad(90), 0, 0))
+                        task.wait()
+                        ApplyThrowForce(part, CFrame.new(0, -1.5, -targetHumanoid.WalkSpeed), CFrame.Angles(0, 0, 0))
+                        task.wait()
+                        ApplyThrowForce(part, CFrame.new(0, 1.5, targetHumanoid.WalkSpeed), CFrame.Angles(math.rad(90), 0, 0))
+                        task.wait()
+                        ApplyThrowForce(part, CFrame.new(0, 1.5, targetRootPart.Velocity.Magnitude / 1.25), CFrame.Angles(math.rad(90), 0, 0))
+                        task.wait()
+                        ApplyThrowForce(part, CFrame.new(0, -1.5, -targetRootPart.Velocity.Magnitude / 1.25), CFrame.Angles(0, 0, 0))
+                        task.wait()
+                        ApplyThrowForce(part, CFrame.new(0, 1.5, targetRootPart.Velocity.Magnitude / 1.25), CFrame.Angles(math.rad(90), 0, 0))
+                        task.wait()
+                        ApplyThrowForce(part, CFrame.new(0, -1.5, 0), CFrame.Angles(math.rad(90), 0, 0))
+                        task.wait()
+                        ApplyThrowForce(part, CFrame.new(0, -1.5, 0), CFrame.Angles(0, 0, 0))
+                        task.wait()
+                        ApplyThrowForce(part, CFrame.new(0, -1.5, 0), CFrame.Angles(math.rad(-90), 0, 0))
+                        task.wait()
+                        ApplyThrowForce(part, CFrame.new(0, -1.5, 0), CFrame.Angles(0, 0, 0))
+                        task.wait()
+                        ApplyThrowForce(part, CFrame.new(0, -1.5, 0), CFrame.Angles(math.rad(-90), 0, 0))
+                        task.wait()
+                    end
+                    velocityMagnitude = part.Velocity.Magnitude
+                    if velocityMagnitude <= 500 then
+                        local partParent = part.Parent
+                        if partParent == targetPlayer.Character then
+                            partParent = targetPlayer.Parent
+                            if partParent == Players then
+                                local hasCharacter = not targetPlayer.Character
+                                if hasCharacter ~= targetCharacter then
+                                    local isSitting = targetHumanoid.Sit
+                                    if not isSitting then
+                                        local health = localHumanoid.Health
+                                        if health > 0 then
+                                            local currentTime = tick()
+                                            if startTime + timeoutDuration < currentTime then
+                                                break
+                                            end
+                                        else
+                                            break
+                                        end
+                                    else
+                                        break
+                                    end
+                                else
+                                    break
+                                end
+                            else
+                                break
+                            end
+                        else
+                            break
+                        end
+                    else
+                        break
+                    end
+                end
+            end
+
+            -- 结尾大甩 + 回位
+            workspace.FallenPartsDestroyHeight = 0 / 0
+            local bodyVelocity = Instance.new("BodyVelocity")
+            bodyVelocity.Name = "EpixVel"
+            bodyVelocity.Parent = localRootPart
+            bodyVelocity.Velocity = Vector3.new(9e8, 9e8, 9e8)
+            bodyVelocity.MaxForce = Vector3.new(1 / 0, 1 / 0, 1 / 0)
+            localHumanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, false)
+            if targetRootPart and targetHead then
+                if (targetRootPart.CFrame.p - targetHead.CFrame.p).Magnitude > 5 then
+                    PerformThrowAnimation(targetHead)
+                else
+                    PerformThrowAnimation(targetRootPart)
+                end
+            elseif targetRootPart and not targetHead then
+                PerformThrowAnimation(targetRootPart)
+            elseif not targetRootPart and targetHead then
+                PerformThrowAnimation(targetHead)
+            elseif not targetRootPart and not targetHead and targetAccessory and accessoryHandle then
+                PerformThrowAnimation(accessoryHandle)
+            else
+                return SendNotification("xhk缝合脚本", "开/关", 5)
+            end
+            bodyVelocity:Destroy()
+            localHumanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, true)
+            workspace.CurrentCamera.CameraSubject = localHumanoid
+            repeat
+                localRootPart.CFrame = getgenv().OldPos * CFrame.new(0, 0.5, 0)
+                localCharacter:SetPrimaryPartCFrame(getgenv().OldPos * CFrame.new(0, 0.5, 0))
+                localHumanoid:ChangeState("GettingUp")
+                for _, child in ipairs(localCharacter:GetChildren()) do
+                    if child:IsA("BasePart") then
+                        child.Velocity = Vector3.new()
+                        child.RotVelocity = Vector3.new()
+                    end
+                end
+                task.wait()
+            until (localRootPart.Position - getgenv().OldPos.p).Magnitude < 25
+            workspace.FallenPartsDestroyHeight = getgenv().FPDH or -500
+        end
+    end
+
+    -- 执行甩飞（只甩这 1 个人）
+    for _, name in ipairs(targetNames) do
+        local found = FindPlayerByName(name)
+        if found and found ~= LocalPlayer then
+            ThrowPlayer(found)
+        end
+    end
+end
+
+-- 生成玩家列表
+local function buildPlayerList()
+    local t = {}
+    for _, p in ipairs(Players:GetPlayers()) do
+        if p ~= LocalPlayer then
+            table.insert(t, p.Name)
+        end
+    end
+    return t
+end
+
+-- 甩飞玩家下拉菜单
+local ThrowDropdown = FuncGroup:AddDropdown("ThrowPlayer", {
+    Text = "选择甩飞玩家",
+    Values = buildPlayerList()
+})
+ThrowDropdown:OnChanged(function(selected)
+    pcall(function()
+        local target = Players:FindFirstChild(selected)
+        if target then
+            ThrowSinglePlayer(target)
+        end
+    end)
+end)
+
+-- 其他功能按钮
+
+FuncGroup:AddButton("帅飞所有人", function()
+    loadstring(game:HttpGet("https://pastebin.com/raw/zqyDSUWX"))()
+    Library:Notify("已加载！", 3)
+end)
+
+FuncGroup:AddButton("无敌少侠R15飞行", function()
+    loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Invinicible-Flight-R15-45414"))()
+    Library:Notify("已加载！", 3)
+end)
+
+FuncGroup:AddButton("无敌少侠R6飞行", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/ke9460394-dot/ugik/refs/heads/main/%E6%97%A0%E6%95%8C%E5%B0%91%E4%BE%A0%E9%A3%9E%E8%A1%8Cr6.txt"))()
+    Library:Notify("已加载！", 3)
+end)
+
+FuncGroup:AddButton("R15撸管", function()
+    loadstring(game:HttpGet("https://pastefy.app/YZoglOyJ/raw"))()
+    Library:Notify("已加载！", 3)
+end)
+
+FuncGroup:AddButton("R6撸管", function()
+    loadstring(game:HttpGet("https://pastefy.app/wa3v2Vgm/raw"))()
+    Library:Notify("已加载！", 3)
+end)
+
+FuncGroup:AddButton("透视", function()
+    loadstring(game:HttpGet("https://pastefy.app/LE2hzECZ/raw"))()
+    Library:Notify("已加载！", 3)
+end)
+
+FuncGroup:AddButton("上帝模式", function()
+    local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+    local humanoid = character:FindFirstChildOfClass("Humanoid")
+    if humanoid then
+        humanoid.MaxHealth, humanoid.Health = math.huge, math.huge
+        humanoid.HealthChanged:Connect(function() humanoid.Health = math.huge end)
+        Library:Notify("上帝模式已开启！", 3)
+    end
+end)
+
+FuncGroup:AddButton("上天堂", function()
+    loadstring(game:HttpGet("https://pastefy.app/xV1T3PAi/raw"))()
+    Library:Notify("已加载！", 3)
+end)
+
+FuncGroup:AddButton("坐下", function()
+    game.Players.LocalPlayer.Character.Humanoid.Sit = true
+end)
+
+-- ========== 自瞄页 ==========
+local PlaakGroup = Tabs.Geasll:AddLeftGroupbox("自瞄设置")
+
+-- 全局自瞄配置变量
+local AimConfig = {
+    enabled = false,
+    targetBone = "Head",
+    priorityMode = "Smart",
+    aimMode = "Function",
+    teamCheck = false,
+    wallCheck = false,
+    aliveCheck = true,
+    smoothness = 3,
+    aimSpeed = 6,
+    fovsize = 60,
+    distance = 250,
+    fovcolor = Color3.fromRGB(0, 120, 255),
+    dynamicFOV = false,
+    autoFire = false,
+    healthPriority = false,
+    threatPriority = false,
+    smartWeights = {
+        distance = 0.3,
+        crosshair = 0.4,
+        speed = 0.2,
+        health = 0.1
+    }
+}
+
+-- 部位定义
+local bodyParts = {
+    "头部", "脖子", "躯干", "上半身", "下半身",
+    "左臂", "右臂", "左大臂", "右大臂", "左小臂", "右小臂",
+    "左手", "右手", "左腿", "右腿", "左大腿", "右大腿", 
+    "左小腿", "右小腿", "左脚", "右脚"
+}
+
+local boneMapping = {
+    ["头部"] = "Head", ["脖子"] = "Neck", ["躯干"] = "HumanoidRootPart",
+    ["上半身"] = "UpperTorso", ["下半身"] = "LowerTorso",
+    ["左臂"] = "LeftUpperArm", ["右臂"] = "RightUpperArm",
+    ["左大臂"] = "LeftUpperArm", ["右大臂"] = "RightUpperArm",
+    ["左小臂"] = "LeftLowerArm", ["右小臂"] = "RightLowerArm",
+    ["左手"] = "LeftHand", ["右手"] = "RightHand",
+    ["左腿"] = "LeftUpperLeg", ["右腿"] = "RightUpperLeg",
+    ["左大腿"] = "LeftUpperLeg", ["右大腿"] = "RightUpperLeg",
+    ["左小腿"] = "LeftLowerLeg", ["右小腿"] = "RightLowerLeg",
+    ["左脚"] = "LeftFoot", ["右脚"] = "RightFoot"
+}
+
+-- 1. 自瞄开关 - 修复：使用正确的库方法
+PlaakGroup:AddToggle("AimEnabled", {
+    Text = "开启自瞄", 
+    Default = false
+}):OnChanged(function(on)
+    AimConfig.enabled = on
+    if on then
+        Library:Notify("自瞄已开启", 2)
+    else
+        Library:Notify("自瞄已关闭", 2)
+    end
+end)
+
+-- 2. 部位选择 - 修复：使用正确的库方法
+PlaakGroup:AddDropdown("AimBone", {
+    Text = "自瞄部位",
+    Values = bodyParts,
+    Default = "头部"
+}):OnChanged(function(selected)
+    AimConfig.targetBone = boneMapping[selected] or "Head"
+    Library:Notify("已设置为: " .. selected, 2)
+end)
+
+-- 3. 平滑度滑块
+PlaakGroup:AddSlider("AimSmooth", {
+    Text = "平滑度",
+    Min = 1, Max = 10, Default = 3, Rounding = 1
+}):OnChanged(function(value)
+    AimConfig.smoothness = value
+end)
+
+-- 4. 速度滑块
+PlaakGroup:AddSlider("AimSpeed", {
+    Text = "瞄准速度",
+    Min = 1, Max = 20, Default = 6, Rounding = 0
+}):OnChanged(function(value)
+    AimConfig.aimSpeed = value
+end)
+
+-- 5. FOV大小
+PlaakGroup:AddSlider("FOVSize", {
+    Text = "FOV范围",
+    Min = 10, Max = 300, Default = 60, Rounding = 0
+}):OnChanged(function(value)
+    AimConfig.fovsize = value
+end)
+
+-- 6. 距离限制
+PlaakGroup:AddSlider("AimDistance", {
+    Text = "最大距离",
+    Min = 50, Max = 1000, Default = 250, Rounding = 0
+}):OnChanged(function(value)
+    AimConfig.distance = value
+end)
+
+-- 7. 检查选项
+PlaakGroup:AddToggle("AliveCheck", {
+    Text = "存活检查",
+    Default = true
+}):OnChanged(function(on)
+    AimConfig.aliveCheck = on
+end)
+
+PlaakGroup:AddToggle("TeamCheck", {
+    Text = "队伍检查",
+    Default = false
+}):OnChanged(function(on)
+    AimConfig.teamCheck = on
+end)
+
+-- ========== 自瞄核心功能 ==========
+local RunService = game:GetService("RunService")
+
+-- 辅助函数
+function WorldToScreen(position)
+    local camera = workspace.CurrentCamera
+    local vector, onScreen = camera:WorldToViewportPoint(position)
+    return onScreen and Vector2.new(vector.X, vector.Y) or nil
+end
+
+function GetDistanceToPlayer(player)
+    local localChar = LocalPlayer.Character
+    if not localChar or not player.Character then return math.huge end
+    
+    local playerRoot = player.Character:FindFirstChild("HumanoidRootPart")
+    local localRoot = localChar:FindFirstChild("HumanoidRootPart")
+    
+    if not playerRoot or not localRoot then return math.huge end
+    return (playerRoot.Position - localRoot.Position).Magnitude
+end
+
+function IsInFOV(player)
+    if not player.Character then return false end
+    local playerRoot = player.Character:FindFirstChild("HumanoidRootPart")
+    if not playerRoot then return false end
+    
+    local screenPos = WorldToScreen(playerRoot.Position)
+    if not screenPos then return false end
+    
+    local viewportSize = workspace.CurrentCamera.ViewportSize
+    local center = Vector2.new(viewportSize.X/2, viewportSize.Y/2)
+    return (screenPos - center).Magnitude <= AimConfig.fovsize
+end
+
+function CalculateSmartScore(player)
+    if not player.Character or not player.Character:FindFirstChild("HumanoidRootPart") then
+        return -math.huge
+    end
+    
+    local score = 0
+    local distance = GetDistanceToPlayer(player)
+    local distanceScore = 1000 / (distance + 1)
+    
+    -- 准星分数
+    local screenPos = WorldToScreen(player.Character.HumanoidRootPart.Position)
+    local crosshairScore = 0
+    if screenPos then
+        local viewportSize = workspace.CurrentCamera.ViewportSize
+        local center = Vector2.new(viewportSize.X/2, viewportSize.Y/2)
+        crosshairScore = 1000 / ((screenPos - center).Magnitude + 1)
+    end
+    
+    -- 速度分数
+    local velocity = player.Character.HumanoidRootPart.Velocity
+    local speedScore = velocity.Magnitude * 0.5
+    
+    -- 血量分数
+    local humanoid = player.Character:FindFirstChildOfClass("Humanoid")
+    local healthScore = humanoid and (100 - humanoid.Health) * 0.3 or 0
+    
+    -- 智能加权
+    score = distanceScore * AimConfig.smartWeights.distance +
+            crosshairScore * AimConfig.smartWeights.crosshair +
+            speedScore * AimConfig.smartWeights.speed +
+            healthScore * AimConfig.smartWeights.health
+    
+    return score
+end
+
+function IsValidTarget(player)
+    if player == LocalPlayer then return false end
+    if not player.Character then return false end
+    
+    -- 活体检查
+    if AimConfig.aliveCheck then
+        local humanoid = player.Character:FindFirstChildOfClass("Humanoid")
+        if not humanoid or humanoid.Health <= 0 then return false end
+    end
+    
+    -- 队伍检查
+    if AimConfig.teamCheck then
+        if player.Team == LocalPlayer.Team then return false end
+    end
+    
+    -- 距离检查
+    if GetDistanceToPlayer(player) > AimConfig.distance then return false end
+    
+    -- FOV 检查
+    if not IsInFOV(player) then return false end
+    
+    return true
+end
+
+function FindBestTarget()
+    local bestTarget = nil
+    local bestScore = -math.huge
+    
+    for _, player in ipairs(Players:GetPlayers()) do
+        if IsValidTarget(player) then
+            local score = CalculateSmartScore(player)
+            if score > bestScore then
+                bestScore = score
+                bestTarget = player
+            end
+        end
+    end
+    return bestTarget
+end
+
+function AimAtTarget(player)
+    local character = player.Character
+    if not character then return end
+    
+    local targetPart = character:FindFirstChild(AimConfig.targetBone) or character:FindFirstChild("Head")
+    if not targetPart then return end
+    
+    local camera = workspace.CurrentCamera
+    local cameraPos = camera.CFrame.Position
+    local targetPos = targetPart.Position
+    
+    -- 预判计算
+    if AimConfig.aimMode == "Function" then
+        local velocity = targetPart.Velocity
+        local distance = (targetPos - cameraPos).Magnitude
+        local bulletTime = distance / 1000
+        targetPos = targetPos + velocity * bulletTime * 0.5
+    end
+    
+    -- 平滑瞄准（降低平滑度让拉动更容易）
+    local currentCF = camera.CFrame
+    local targetCF = CFrame.new(cameraPos, targetPos)
+    local smoothness = math.clamp(1 / (AimConfig.smoothness + 0.1), 0.1, 1)
+    
+    camera.CFrame = currentCF:Lerp(targetCF, smoothness)
+end
+
+-- 自瞄主循环
+RunService.RenderStepped:Connect(function()
+    if not AimConfig.enabled then return end
+    
+    local target = FindBestTarget()
+    if target then
+        AimAtTarget(target)
+    end
+end)
+
+-- ========== 旋转页 ==========
+local SpinGroup = Tabs.Spin:AddLeftGroupbox("旋转控制")
+local angular, LAST_SPEED = nil, 0
+
+local SpinSpeedSlider = SpinGroup:AddSlider("SpinSpeed", {
+    Text = "旋转速度",
+    Min = 0, Max = 200, Default = 0, Rounding = 0
+})
+SpinSpeedSlider:OnChanged(function(value)
+    if value == 0 then
+        if angular then angular:Destroy(); angular = nil end
+        return
+    end
+    
+    local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+    local root = character:FindFirstChild("HumanoidRootPart")
+    if not root then return end
+    
+    if not angular or angular.Parent ~= root then
+        if angular then angular:Destroy() end
+        angular = Instance.new("BodyAngularVelocity")
+        angular.Name = "NetSpin"
+        angular.MaxTorque = Vector3.new(0, 400000, 0)
+        angular.P = 50000
+        angular.Parent = root
+    end
+    
+    angular.AngularVelocity = Vector3.new(0, value * 0.8, 0)
+    LAST_SPEED = value
+end)
+
+LocalPlayer.CharacterAdded:Connect(function(char)
+    task.wait(0.5)
+    if LAST_SPEED ~= 0 then
+        SpinSpeedSlider:SetValue(LAST_SPEED)
+    end
+end)
+
+-- ========== UI设置页 ==========
+local ConfigGroup = Tabs.UISettings:AddLeftGroupbox("配置管理")
+ConfigGroup:AddButton("✅ 保存配置", function() SaveManager:SaveConfiguration() Library:Notify("已保存", 2) end)
+ConfigGroup:AddButton("📂 加载配置", function() SaveManager:LoadConfiguration() Library:Notify("已加载", 2) end)
+ConfigGroup:AddButton("🗑️ 清除配置", function() SaveManager:ClearConfiguration() Library:Notify("已清除", 2) end)
+ConfigGroup:AddButton("❌ 删除UI", function() Library:Unload() end)
+
+-- ========== 初始化系统 ==========
+SaveManager:SetLibrary(Library)
+ThemeManager:SetLibrary(Library)
+SaveManager:IgnoreThemeSettings()
+SaveManager:SetIgnoreIndexes({ "MenuKeybind" })
+SaveManager:SetFolder("TookirStitch")
+SaveManager:BuildConfigSection(Tabs.UISettings)
+ThemeManager:ApplyToTab(Tabs.UISettings)
+SaveManager:LoadAutoloadConfig()
+
+print("✅ 所有功能加载完成！")
+Library:Notify("🎉 脚本 v0.1 已就绪！@不想玩墨水", 5)
