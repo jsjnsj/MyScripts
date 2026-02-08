@@ -22,6 +22,7 @@ local Window = Library:CreateWindow({
 local Tabs = {}
 Tabs.General = Window:AddTab("通用", "user")
 Tabs.Geasll = Window:AddTab("自瞄", "door-open")
+Tabs.Geasly = Window:AddTab("ESP透视", "door-open")
 Tabs.Spin = Window:AddTab("旋转", "star")
 Tabs.UISettings = Window:AddTab("UI设置", "settings")
 
@@ -635,100 +636,6 @@ PlayerGroup:AddButton("重置重力", function()
     end)
 end)
 
--- 玩家透视（ESP高亮）
-local PlayerESPToggle = PlayerGroup:AddToggle("PlayerESP", {
-    Text = "透视可关",
-    Default = false
-})
-
-local espConnections = {}
-local playerHighlights = {}
-
-local function CreateHighlightForPlayer(player)
-    pcall(function()
-        if player == LocalPlayer then return end
-        
-        local character = player.Character
-        if not character then return end
-        
-        if playerHighlights[player] then
-            playerHighlights[player]:Destroy()
-        end
-        
-        local highlight = Instance.new("Highlight")
-        highlight.Name = "PlayerESP"
-        highlight.FillColor = Color3.fromRGB(255, 0, 255) -- 紫色
-        highlight.OutlineColor = Color3.fromRGB(255, 255, 255) -- 白色边框
-        highlight.FillTransparency = 0.5
-        highlight.OutlineTransparency = 0
-        highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop -- 穿墙可见
-        highlight.Parent = character
-        
-        playerHighlights[player] = highlight
-        
-        character.AncestryChanged:Connect(function()
-            if not character:IsDescendantOf(game) then
-                if playerHighlights[player] then
-                    playerHighlights[player]:Destroy()
-                    playerHighlights[player] = nil
-                end
-            end
-        end)
-    end)
-end
-
-local function ClearAllHighlights()
-    for player, highlight in pairs(playerHighlights) do
-        if highlight then
-            highlight:Destroy()
-        end
-    end
-    playerHighlights = {}
-end
-
-PlayerESPToggle:OnChanged(function()
-    pcall(function()
-        if PlayerESPToggle.Value then
-            -- 为所有玩家创建高亮
-            for _, player in ipairs(Players:GetPlayers()) do
-                task.spawn(function()
-                    CreateHighlightForPlayer(player)
-                end)
-            end
-            
-            -- 监听新玩家
-            table.insert(espConnections, Players.PlayerAdded:Connect(function(player)
-                if PlayerESPToggle.Value then
-                    task.wait(1)
-                    CreateHighlightForPlayer(player)
-                end
-            end))
-            
-            -- 监听角色重生
-            for _, player in ipairs(Players:GetPlayers()) do
-                if player ~= LocalPlayer then
-                    player.CharacterAdded:Connect(function()
-                        if PlayerESPToggle.Value then
-                            task.wait(0.5)
-                            CreateHighlightForPlayer(player)
-                        end
-                    end)
-                end
-            end
-            
-            Library:Notify("透视已开启！", 3)
-        else
-            -- 清理
-            for _, conn in ipairs(espConnections) do
-                if conn then conn:Disconnect() end
-            end
-            espConnections = {}
-            ClearAllHighlights()
-            Library:Notify("透视已关闭！", 2)
-        end
-    end)
-end)
-
 -- ========== 通用页 - 核心功能 ==========
 local FuncGroup = Tabs.General:AddRightGroupbox("核心功能")
 
@@ -1315,6 +1222,101 @@ RunService.RenderStepped:Connect(function()
     if target then
         AimAtTarget(target)
     end
+end)
+local jjqjjqkq = Tabs.Geasly:AddLeftGroupbox("透视功能")
+
+-- 玩家透视（ESP高亮）
+local jjqjjqkq = Tabs.Geasly:AddToggle("PlayerESP", {
+    Text = "透视可关",
+    Default = false
+})
+
+local espConnections = {}
+local playerHighlights = {}
+
+local function CreateHighlightForPlayer(player)
+    pcall(function()
+        if player == LocalPlayer then return end
+        
+        local character = player.Character
+        if not character then return end
+        
+        if playerHighlights[player] then
+            playerHighlights[player]:Destroy()
+        end
+        
+        local highlight = Instance.new("Highlight")
+        highlight.Name = "PlayerESP"
+        highlight.FillColor = Color3.fromRGB(255, 0, 255) -- 紫色
+        highlight.OutlineColor = Color3.fromRGB(255, 255, 255) -- 白色边框
+        highlight.FillTransparency = 0.5
+        highlight.OutlineTransparency = 0
+        highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop -- 穿墙可见
+        highlight.Parent = character
+        
+        playerHighlights[player] = highlight
+        
+        character.AncestryChanged:Connect(function()
+            if not character:IsDescendantOf(game) then
+                if playerHighlights[player] then
+                    playerHighlights[player]:Destroy()
+                    playerHighlights[player] = nil
+                end
+            end
+        end)
+    end)
+end
+
+local function ClearAllHighlights()
+    for player, highlight in pairs(playerHighlights) do
+        if highlight then
+            highlight:Destroy()
+        end
+    end
+    playerHighlights = {}
+end
+
+PlayerESPToggle:OnChanged(function()
+    pcall(function()
+        if PlayerESPToggle.Value then
+            -- 为所有玩家创建高亮
+            for _, player in ipairs(Players:GetPlayers()) do
+                task.spawn(function()
+                    CreateHighlightForPlayer(player)
+                end)
+            end
+            
+            -- 监听新玩家
+            table.insert(espConnections, Players.PlayerAdded:Connect(function(player)
+                if PlayerESPToggle.Value then
+                    task.wait(1)
+                    CreateHighlightForPlayer(player)
+                end
+            end))
+            
+            -- 监听角色重生
+            for _, player in ipairs(Players:GetPlayers()) do
+                if player ~= LocalPlayer then
+                    player.CharacterAdded:Connect(function()
+                        if PlayerESPToggle.Value then
+                            task.wait(0.5)
+                            CreateHighlightForPlayer(player)
+                        end
+                    end)
+                end
+            end
+            
+            Library:Notify("透视已开启！", 3)
+        else
+            -- 清理
+            for _, conn in ipairs(espConnections) do
+                if conn then conn:Disconnect() end
+            end
+            espConnections = {}
+            ClearAllHighlights()
+            Library:Notify("透视已关闭！", 2)
+        end
+    end)
 end)
 
 -- ========== 旋转页 ==========
