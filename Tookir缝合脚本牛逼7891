@@ -15,9 +15,10 @@ local Window = WindUI:CreateWindow({
         Anonymous = false
     },
     KeySystem = {
-        Key = { "Tookir缝合脚本" },
-        Note = "目前已停运，是否使用？",
+        Key = { "不想玩墨水牛逼666" },
+        Note = "如果有需要卡密，请联系作者QQ:2136024871",
         Thumbnail = {
+        Image ＝ "rbxassetid://10434812692738"
             Title = "",
         },
         SaveKey = false,
@@ -31,7 +32,7 @@ Window:Tag({
 })
 
 Window:Tag({
-    Title = "但已停运",
+    Title = "祝你生活愉快",
     Color = Color3.fromHex("#000000")
 })
 
@@ -200,7 +201,7 @@ Tab1:Paragraph({
 
 Tab1:Paragraph({
     Title = "公告",
-    Desc = [[抱歉，此脚本已停运，虽继续使用也无妨]],
+    Desc = [[不知道更新啥了，就这样吧]],
     Image = "door-open",
     ImageSize = 24,
     Color = Color3.fromHex("#FFFFFF"),
@@ -219,7 +220,7 @@ Tab1:Button({
             Title = "复制成功",
             Content = "QQ号已复制到剪贴板",
             Duration = 3,
-            Icon = "check"
+            Icon = "check-circle"
         })
         
         print("复制成功")
@@ -255,7 +256,7 @@ Tab2:Slider({
                 humanoid.JumpPower = value
             end 
         end 
-        SafeNotify("", "已设置为: " .. value, 2, "eye")
+        SafeNotify("跳跃高度", "已设置为: " .. value, 2, "eye")
     end
 })
 
@@ -284,7 +285,7 @@ Tab2:Slider({
 Button(Tab2,"飞行v3",function()
     local main = Instance.new("ScreenGui")
     local Frame = Instance.new("Frame")
-     -- 如果飞行UI已存在，先销毁
+
     local existingGUI = game.Players.LocalPlayer.PlayerGui:FindFirstChild("main")
     if existingGUI then
         existingGUI:Destroy()
