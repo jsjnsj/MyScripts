@@ -24,6 +24,15 @@ game:GetService("StarterGui"):SetCore("SendNotification", {
 })
 wait(1.5)
 
+game:GetService("StarterGui"):SetCore("SendNotification", {
+    Title = "墨落缝合脚本",
+    Text = "其实原本是要跑路的，但还是算了",
+    Icon = "rbxassetid://90004607995548",
+    Duration = 1,
+    Callback = bindable,
+})
+wait(1.5)
+
 -- ========== 反挂机 ==========
 local VirtualUserService = game:GetService("VirtualUser")
 game:GetService("Players").LocalPlayer.Idled:Connect(function()
