@@ -1,23 +1,98 @@
+-- ========== 通知回调 ==========
+local bindable = Instance.new("BindableFunction")
+bindable.OnInvoke = function(button)
+    print("点击了按钮:", button)
+end
+
+-- ========== 开场通知 ==========
+game:GetService("StarterGui"):SetCore("SendNotification", {
+    Title = "墨落缝合脚本",
+    Text = "欢迎使用墨落缝合脚本",
+    Icon = "rbxassetid://90004607995548",
+    Duration = 1,
+    Callback = bindable,
+    Button1 = "脚本永远免费",
+})
+wait(1.5)
+game:GetService("StarterGui"):SetCore("SendNotification", {
+    Title = "墨落缝合脚本",
+    Text = "此脚本功能较少，见谅",
+    Icon = "rbxassetid://90004607995548",
+    Duration = 1,
+    Callback = bindable,
+    Button1 = "请勿倒卖",
+})
+wait(1.5)
+
+-- ========== 反挂机 ==========
+local VirtualUserService = game:GetService("VirtualUser")
+game:GetService("Players").LocalPlayer.Idled:Connect(function()
+    VirtualUserService:Button2Down(Vector2.new(0, 0), workspace.CurrentCamera.CFrame)
+    wait(1)
+    VirtualUserService:Button2Up(Vector2.new(0, 0), workspace.CurrentCamera.CFrame)
+end)
+game:GetService("StarterGui"):SetCore("SendNotification", {
+    Title = "墨落缝合脚本",
+    Text = "已自动开启反挂机",
+    Icon = "rbxassetid://90004607995548",
+    Duration = 2,
+    Callback = bindable,
+    Button1 = "祝你玩的开心",
+    Button2 = "谢谢使用",
+})
+
+-- ========== 获取用户信息 ==========
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+local function GetExecutorName()
+    local success, result = pcall(function()
+        return identifyexecutor()
+    end)
+    if success and result then
+        return tostring(result)
+    end
+    
+    if syn then return "Synapse X" end
+    if fluxus then return "Fluxus" end
+    if krnl then return "KRNL" end
+    if oxygen then return "Oxygen" end
+    if codex then return "Codex" end
+    if delta then return "Delta" end
+    if evon then return "Evon" end
+    if arceus then return "Arceus X" end
+    if isvm then return "Vega X" end
+    if is_sirhurt_closure then return "SirHurt" end
+    
+    return "未知注入器"
+end
+
+local ExecutorName = GetExecutorName()
+local Username = LocalPlayer.Name
+local DisplayName = LocalPlayer.DisplayName
+local AccountAge = LocalPlayer.AccountAge
+
+-- ========== WindUI 窗口 ==========
 local WindUI = loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/releases/latest/download/main.lua"))()
 
--- =============== 正确的窗口创建 ===============
 local Window = WindUI:CreateWindow({
-    Title = "Tookir缝合脚本",
+    Title = "墨落缝合脚本",
     Icon = "door-open",
     Author = "作者:不想玩墨水",
-    Folder = "CloudHub",
-    Size = UDim2.fromOffset(560, 360),
-    Transparent = true,
-    Theme = "Light",
+    Size = UDim2.fromOffset(580, 420), 
+    Theme = "Dark",
+    HideSearchBar = false,                   
+    SideBarWidth = 200,                      
     User = {
         Enabled = true,
         Callback = function() print("clicked") end,
         Anonymous = false
     },
     KeySystem = {
-        Key = { "不想玩墨水牛逼666" },
-        Note = "如果有需要卡密，请联系作者QQ:2136024871",
+        Key = { "MOLU-e6ee8-9901t-t-oop56" },
+        Note = "卡密请找作者, 快手搜不想玩墨水",
         Thumbnail = {
+            Image = "rbxassetid://90004607995548",
             Title = "",
         },
         SaveKey = false,
@@ -31,14 +106,14 @@ Window:Tag({
 })
 
 Window:Tag({
-    Title = "祝你生活愉快",
+    Title = "在线发癫中",
     Color = Color3.fromHex("#000000")
 })
 
 -- =============== 显示通知 ===============
 WindUI:Notify({
-    Title = "Tookir脚本通知",
-    Content = "Tookir脚本禁止倒卖,倒卖死全家",
+    Title = "墨落缝合脚本通知",
+    Content = "墨落缝合脚本禁止二创，此脚本永远免费",
     Duration = 10,
     Icon = "bird"
 })
@@ -53,7 +128,7 @@ local Config = {
 }
 
 Window:EditOpenButton({
-    Title = "打开Tookir缝合脚本",
+    Title = "打开墨落缝合脚本",
     Icon = "monitor",
     CornerRadius = UDim.new(0,16),
     StrokeThickness = 2,
@@ -64,6 +139,7 @@ Window:EditOpenButton({
     Draggable = true,
 })
 
+-- ========== 辅助函数 ==========
 function Tab(title, icon)
     icon = icon or "eye"
     return Window:Tab({Title = title, Icon = icon})
@@ -107,12 +183,11 @@ function WindNotify.Show(text, duration, type)
     }
     local color = colors[type] or colors.success
     
-    -- 这里可以添加实际的通知显示逻辑
-    -- 示例：WindUI:Notify({Title = type, Content = text, Duration = duration})
+    WindUI:Notify({Title = type, Content = text, Duration = duration})
     print(string.format("[%s] %s", type, text))
 end
 
--- 快捷函数（必须放在 WindNotify.Show 定义之后）
+-- 快捷函数
 WindNotify.Success = function(txt, dur) WindNotify.Show(txt, dur, "success") end
 WindNotify.Error = function(txt, dur) WindNotify.Show(txt, dur, "error") end
 WindNotify.Warning = function(txt, dur) WindNotify.Show(txt, dur, "warning") end
@@ -121,7 +196,6 @@ WindNotify.Info = function(txt, dur) WindNotify.Show(txt, dur, "info") end
 -- 导出为全局
 getgenv().WindNotify = WindNotify
 
--- =============== 修复：简化通知函数 ===============
 local function SafeNotify(title, content, duration, icon)
     if not WindUI then return end
     pcall(function()
@@ -134,11 +208,103 @@ local function SafeNotify(title, content, duration, icon)
     end)
 end
 
--- 创建所有标签页
+-- ========== 创建所有标签页 ==========
 local Tab1 = Tab("公告", "door-open")
+local InfoTab = Window:Tab({
+    Title = "用户信息",
+    Icon = "arrow-right",
+    Desc = "显示当前账号和注入器信息"
+})
+
+-- 分隔线 + 标题
+InfoTab:Divider()
+InfoTab:Paragraph({
+    Title = " 账号信息",
+    Desc = "当前登录的 Roblox 账号详情",
+    Icon = "shield"
+})
+InfoTab:Divider()
+
+-- 用户名
+local UsernamePara = InfoTab:Paragraph({
+    Title = "您的用户名",
+    Desc = Username,
+    Icon = "at-sign"
+})
+
+-- 显示名/昵称
+local DisplayNamePara = InfoTab:Paragraph({
+    Title = "您的显示名",
+    Desc = DisplayName,
+    Icon = "tag"
+})
+
+-- 账号年龄
+local AccountAgePara = InfoTab:Paragraph({
+    Title = "您的账号年龄",
+    Desc = AccountAge .. " 天 (约 " .. math.floor(AccountAge / 365 * 10) / 10 .. " 年)",
+    Icon = "calendar"
+})
+
+-- UserId
+local UserIdPara = InfoTab:Paragraph({
+    Title = "您的用户ID",
+    Desc = tostring(LocalPlayer.UserId),
+    Icon = "hash"
+})
+
+-- 注入器名字
+local ExecutorPara = InfoTab:Paragraph({
+    Title = "您的注入器名称",
+    Desc = ExecutorName,
+    Icon = "terminal"
+})
+
+-- ========== 添加一个刷新按钮 ==========
+InfoTab:Button({
+    Title = "刷新信息",
+    Desc = "点击刷新所有显示的信息",
+    Icon = "refresh-cw",
+    Callback = function()
+        AccountAgePara:SetDesc(LocalPlayer.AccountAge .. " 天 (约 " .. math.floor(LocalPlayer.AccountAge / 365 * 10) / 10 .. " 年)")
+        DisplayNamePara:SetDesc(LocalPlayer.DisplayName)
+        
+        WindUI:Notify({
+            Title = "刷新成功",
+            Content = "用户信息已更新！",
+            Duration = 2
+        })
+    end
+})
+
+-- ========== 添加复制按钮 ==========
+InfoTab:Button({
+    Title = "复制用户名",
+    Desc = "将用户名复制到剪贴板",
+    Icon = "copy",
+    Callback = function()
+        if setclipboard then
+            setclipboard(Username)
+            WindUI:Notify({
+                Title = "复制成功",
+                Content = "用户名已复制: " .. Username,
+                Duration = 2
+            })
+        else
+            WindUI:Notify({
+                Title = "复制失败",
+                Content = "当前注入器不支持剪贴板功能",
+                Duration = 3,
+                Icon = "alert-circle"
+            })
+        end
+    end
+})
+
 local Tab2 = Tab("通用", "user")
 local Tabl = Tab("自瞄", "eye")
 local Tab3 = Tab("旋转", "star")
+local Tab91 = Tab("透视", "navigation")
 local Taba = Tab("动画", "monitor")
 local Tabx = Tab("甩飞", "shield")
 local Tabo = Tab("传送功能", "cross")
@@ -161,7 +327,7 @@ local Tab19 = Tab("忍者传奇", "eye")
 local Tab20 = Tab("Chain", "eye")
 local Tab21 = Tab("俄亥俄州", "eye")
 
--- 公告页按钮
+-- ========== 公告页 ==========
 Tab1:Paragraph({
     Title = "作者：",
     Desc = [[不想玩墨水]],
@@ -199,8 +365,8 @@ Tab1:Paragraph({
 })
 
 Tab1:Paragraph({
-    Title = "公告",
-    Desc = [[不知道更新啥了，就这样吧]],
+    Title = "更新",
+    Desc = [[增加了用户信息调整相机距离和透视目前只有一个]],
     Image = "door-open",
     ImageSize = 24,
     Color = Color3.fromHex("#FFFFFF"),
@@ -213,18 +379,19 @@ Tab1:Paragraph({
 Tab1:Button({
     Title = "作者QQ",
     Callback = function()
-        setclipboard("2136024871")
+        if setclipboard then
+            setclipboard("2136024871")
+        end
         WindUI:Notify({
-        
             Title = "复制成功",
             Content = "QQ号已复制到剪贴板",
             Duration = 3,
-            Icon = "check-circle"
+            Icon = "check"
         })
-        
         print("复制成功")
     end
 })
+
 
 Tab2:Slider({
     Title = "移动速度",
@@ -260,6 +427,19 @@ Tab2:Slider({
 })
 
 Tab2:Slider({
+    Title = "相机距离",
+    Value = { Min = 0, Max =200000, Default = 128 },
+    Step = 10,
+    Callback = function(value)
+        local player = game:GetService("Players").LocalPlayer
+        if player then
+            player.CameraMaxZoomDistance = value
+            SafeNotify("相机距离", "最远距离已设置为: " .. tostring(value), 2)
+        end
+    end
+})
+
+Tab2:Slider({
     Title = "重力调整",
     Value = { Min = 0, Max = 500, Default = 196.2 },
     Step = 1,
@@ -272,7 +452,7 @@ Tab2:Slider({
 
 Tab2:Slider({
     Title = "广角调整",
-    Value = { Min = 40, Max = 120, Default = 70 },
+    Value = { Min = 10, Max = 250, Default = 70 },
     Step = 1,
     Callback = function(value)
         pcall(function()
@@ -284,7 +464,7 @@ Tab2:Slider({
 Button(Tab2,"飞行v3",function()
     local main = Instance.new("ScreenGui")
     local Frame = Instance.new("Frame")
-
+     -- 如果飞行UI已存在，先销毁
     local existingGUI = game.Players.LocalPlayer.PlayerGui:FindFirstChild("main")
     if existingGUI then
         existingGUI:Destroy()
@@ -874,6 +1054,20 @@ Button(Tab2, "Dex", function()
     print("已加载！")
 end)
 
+Button(Tab2, "慢跑侠", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/jsjnsj/my-roblox-scripts/refs/heads/main/%E6%85%A2%E8%B7%91%E4%BE%A0"))()
+    print("已加载！")
+end)
+
+Button(Tab2,"坐下",function()
+    game.Players.LocalPlayer.Character.Humanoid.Sit = true
+end)
+
+Button(Tab2,"自杀",function()
+    game.Players.LocalPlayer.Character.Humanoid.Health = 0
+end)
+
+--透视
 local Players = game:GetService("Players") 
 local LocalPlayer = Players.LocalPlayer  
 
@@ -922,7 +1116,7 @@ local function ClearAllHighlights()
     playerHighlights = {}
 end
 
-Toggle(Tab2, "透视可关", false, function(on)
+Toggle(Tab91, "透视可关", false, function(on)
     print(" →", on and "开" or "关")
     
     if on then
@@ -959,19 +1153,6 @@ Toggle(Tab2, "透视可关", false, function(on)
         ClearAllHighlights()
         print("透视已关闭！")
     end
-end)
-
-Button(Tab2, "慢跑侠", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/jsjnsj/my-roblox-scripts/refs/heads/main/%E6%85%A2%E8%B7%91%E4%BE%A0"))()
-    print("已加载！")
-end)
-
-Button(Tab2,"坐下",function()
-    game.Players.LocalPlayer.Character.Humanoid.Sit = true
-end)
-
-Button(Tab2,"自杀",function()
-    game.Players.LocalPlayer.Character.Humanoid.Health = 0
 end)
 
 -- 全局自瞄配置变量
@@ -1704,7 +1885,6 @@ local function CanShoot(targetCharacter)
     return result == nil
 end
 
--- 找目标（只看距离和墙，不看部位）
 local function GetTarget()
     local myChar = LocalPlayer.Character
     if not myChar then return nil end
@@ -1722,7 +1902,6 @@ local function GetTarget()
         local humanoid = character:FindFirstChildOfClass("Humanoid")
         if not humanoid or humanoid.Health <= 0 then continue end
         
-        -- 只检测能不能打到，不管瞄的哪个部位
         if CanShoot(character) then
             return true  -- 有目标就返回true
         end
@@ -1829,7 +2008,7 @@ end)
 
 Button(Tab4, "xhknfjnknn", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/jsjnsj/my-roblox-scripts/refs/heads/main/xhknfjnknn.%E8%87%AA%E5%88%B6%E8%84%9A%E6%9C%AC"))()
-    WindNotify.Success("彩蛋脚本已加载！", 2)
+    WindNotify.Success("以前的一个废稿脚本", 2)
 end)
 
 -- ========== Tab5: Doors ==========
@@ -1844,10 +2023,7 @@ Button(Tab5, "这个我也不知道", function()
     WindNotify.Success("神秘脚本已加载！", 2)
 end)
 
-Button(Tab5, "Doors XA", function()
-    loadstring(game:HttpGet("https://pastebin.com/raw/65TwT8ja"))()
-    WindNotify.Success("Doors XA 已加载！", 2)
-end)
+
 
 
 -- ========== Tab6: 死铁轨 ==========
@@ -1863,7 +2039,6 @@ Button(Tab6, "死铁轨英文脚本", function()
     WindNotify.Success("死铁轨英文脚本已加载！", 2)
 end)
 
-
 -- ========== Tab7: 99 ==========
 
 Button(Tab7, "99可杀队友", function()
@@ -1876,17 +2051,12 @@ Button(Tab7, "刷钻石?", function()
     WindNotify.Success("刷钻石脚本已加载！", 2)
 end)
 
-Button(Tab7, "XA 99", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/Xingtaiduan/Script/refs/heads/main/Games/%E6%A3%AE%E6%9E%97%E4%B8%AD%E7%9A%8499%E5%A4%9C.lua"))()
-    WindNotify.Success("XA 99 已加载！", 2)
+Button(Tab7, " 99", function()
+    loadstring(game:HttpGet("https://rawscripts.net/raw/99-Nights-in-the-Forest-99-NITF-KEYLESS-SCRIPT-48729"))()
+    WindNotify.Success("99 已加载！", 2)
 end)
 
 -- ========== Tab8: 自然灾害 ==========
-
-Button(Tab8, "XA 自然灾害脚本", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/Xingtaiduan/Script/refs/heads/main/Games/%E8%87%AA%E7%84%B6%E7%81%BE%E5%AE%B3.lua"))()
-    WindNotify.Success("XA 自然灾害脚本已加载！", 2)
-end)
 
 Button(Tab8, "黑洞v6脚本", function()
     loadstring(game:HttpGet("https://rawscripts.net/raw/Universal-Script-Super-ring-Parts-V6-28581"))()
@@ -1895,17 +2065,17 @@ end)
 
 -- ========== Tab9: 墨水游戏 ==========
 
-Button(Tab9, "墨水脚本一", function()
+Button(Tab9, "墨水脚本博伦", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/hdjsjjdgrhj/script-hub/refs/heads/main/bored"))()
     WindNotify.Success("墨水脚本一已加载！", 2)
 end)
 
-Button(Tab9, "不推荐使用有bug", function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/Xingtaiduan/Script/refs/heads/main/Games/%E5%A2%A8%E6%B0%B4%E6%B8%B8%E6%88%8F.lua"))()
+Button(Tab9, "墨水Ax汉化（不知道谁汉化的）", function()
+    script_key="请输入卡密";loadstring(game:HttpGet("https://raw.githubusercontent.com/hdjsjjdgrhj/script-hub/refs/heads/main/AX%20CN"))()
     WindNotify.Warning("bug脚本已加载，谨慎使用！", 2)
 end)
 
-Button(Tab9, "Ringta脚本", function()
+Button(Tab9, "Ringta汉化脚本", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/hdjsjjdgrhj/script-hub/refs/heads/main/Ringta"))()
     WindNotify.Success("Ringta脚本已加载！", 2)
 end)
@@ -1955,7 +2125,7 @@ Button(Tab14, "种植花园脚本", function()
     WindNotify.Success("种植花园脚本已加载！", 2)
 end)
 
-Button(Tab14, "油管搬运", function()
+Button(Tab14, "种植花园油管搬运", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/GlazeScripts/ZusumeHub/refs/heads/main/UpdateZysume"))()
     WindNotify.Success("油管搬运脚本已加载！", 2)
 end)
@@ -2015,6 +2185,10 @@ Button(Tab20, "Chain", function()
     WindNotify.Success("Chain已加载！", 2)
 end)
 
+Button(Tab20, "Chain晓月汉化", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/hdjsjjdgrhj/script-hub/refs/heads/main/caid%20cn"))()
+    WindNotify.Success("Chain已加载！", 2)
+end)
 
 -- ========== Tab21: 俄亥俄州 ==========
 
@@ -2030,3 +2204,4 @@ end)
 
 
 print("加载成功")
+
