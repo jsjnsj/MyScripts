@@ -6,7 +6,7 @@ end
 
 -- ========== 开场通知 ==========
 game:GetService("StarterGui"):SetCore("SendNotification", {
-    Title = "墨落缝合脚本",
+    Title = "墨落缝合脚本\u{e000}",
     Text = "欢迎使用墨落缝合脚本",
     Icon = "rbxassetid://90004607995548",
     Duration = 1,
@@ -15,7 +15,7 @@ game:GetService("StarterGui"):SetCore("SendNotification", {
 })
 wait(1.5)
 game:GetService("StarterGui"):SetCore("SendNotification", {
-    Title = "墨落缝合脚本",
+    Title = "墨落缝合脚本\u{e000}",
     Text = "此脚本功能较少，见谅",
     Icon = "rbxassetid://90004607995548",
     Duration = 1,
@@ -25,7 +25,7 @@ game:GetService("StarterGui"):SetCore("SendNotification", {
 wait(1.5)
 
 game:GetService("StarterGui"):SetCore("SendNotification", {
-    Title = "墨落缝合脚本",
+    Title = "墨落缝合脚本\u{e000}",
     Text = "其实原本是要跑路的，但想一想算了",
     Icon = "rbxassetid://90004607995548",
     Duration = 1,
@@ -41,7 +41,7 @@ game:GetService("Players").LocalPlayer.Idled:Connect(function()
     VirtualUserService:Button2Up(Vector2.new(0, 0), workspace.CurrentCamera.CFrame)
 end)
 game:GetService("StarterGui"):SetCore("SendNotification", {
-    Title = "墨落缝合脚本",
+    Title = "墨落缝合脚本\u{e000}",
     Text = "已自动开启反挂机",
     Icon = "rbxassetid://90004607995548",
     Duration = 2,
@@ -137,7 +137,7 @@ local Config = {
 }
 
 Window:EditOpenButton({
-    Title = "打开墨落缝合脚本",
+    Title = "打开脚本\u{e000}",
     Icon = "monitor",
     CornerRadius = UDim.new(0,16),
     StrokeThickness = 2,
@@ -335,6 +335,7 @@ local Tab18 = Tab("速度传奇", "eye")
 local Tab19 = Tab("忍者传奇", "eye")
 local Tab20 = Tab("Chain", "eye")
 local Tab21 = Tab("俄亥俄州", "eye")
+local Tab67 = Tab("设置", "settings")
 
 -- ========== 公告页 ==========
 Tab1:Paragraph({
@@ -2450,6 +2451,15 @@ Button(Tab21, "俄亥俄州2", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/Alan0947383/Demonic-HUB-V2/main/S-C-R-I-P-T.lua", true))()
     WindNotify.Success("俄亥俄州2已加载！", 2)
 end)
+
+Tab67:Dropdown({
+    Title = "选择主题",
+    Values = { "Dark", "Light", "Rose", "Indigo","Plant","Sky","Violet","Amber","Emerald","Midnight","Crimson" },
+    Value = "Dark",
+    Callback = function(theme)
+        WindUI:SetTheme(theme)
+    end,
+})
 
 
 print("加载成功")
