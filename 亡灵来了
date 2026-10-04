@@ -1,0 +1,421 @@
+local WindUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/Footagesus/WindUI/main/dist/main.lua"))()
+
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local Lighting = game:GetService("Lighting")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local LocalPlayer = Players.LocalPlayer
+local Terrain = workspace:WaitForChild("Terrain")
+
+local Window = WindUI:CreateWindow({
+    Title = "亡灵来了\u{e000}",
+    Icon = "crown",
+    Author = "作者:不想玩墨水",
+    Size = UDim2.fromOffset(580, 420),
+    Theme = "Dark",
+    HideSearchBar = false,
+    SideBarWidth = 200,
+    User = {
+        Enabled = true,
+        Callback = function() print("clicked") end,
+        Anonymous = false,
+        SaveKey = false,
+    },
+})
+
+
+function Tab(a, icon) return Window:Tab({Title = a, Icon = icon or "eye"}) end
+function Button(a, b, c) return a:Button({Title = b, Callback = c}) end
+function Toggle(a, b, c, d) return a:Toggle({Title = b, Value = c, Callback = d}) end
+function Slider(a, b, c, d, e, f) return a:Slider({Title = b, Step = 1, Value = {Min = c, Max = d, Default = e}, Callback = f}) end
+
+local Tab2 = Tab("功能", "user")
+
+-- ===== 功能变量
+local attackActive = false
+local attackConn = nil
+local AttackRemote = game:GetService("ReplicatedStorage").Remotes.SendOuchies
+
+-- ==========【1.伤害映射：自定义名字+伤害值】==========
+local damageMap = {
+    ["手枪"] = 24,
+    ["MP5"] = 14,
+    ["双手枪"] = 18,
+    ["爆竹棒"] = 260,
+    ["步枪"] = 120,
+    ["左轮手枪"] = 50,
+    ["AK47"] = 19,
+    ["狙击手"] = 65,
+}
+local damageNames = {}
+for displayName,_ in pairs(damageMap) do
+    table.insert(damageNames, displayName)
+end
+local selectedDamageNames = {damageNames[1]}
+
+-- ==========【僵尸中文<->原名映射（UI显示中文，查找实体用英文原名）】==========
+local zombieNameMap = {
+    ["爬行者"] = "Crawler",
+    ["坦克"] = "Tank",
+    ["危险者"] = "Hazard",
+    ["普通僵尸"] = "Zombie",
+    ["轰炸者"] = "Boomer",
+    ["冲锋者"] = "Charger"
+}
+-- 提取中文名字用于下拉UI显示
+local zombieDisplayNames = {}
+for cnName,_ in pairs(zombieNameMap) do
+    table.insert(zombieDisplayNames, cnName)
+end
+local selectedZombieCN = {zombieDisplayNames[1]}
+
+Tab2:Dropdown({
+    Title = "选择攻击武器",
+    Values = damageNames,
+    Value = selectedDamageNames,
+    Multi = false,
+    AllowNone = true,
+    Callback = function(selectedTable)
+        selectedDamageNames = selectedTable
+    end,
+})
+
+Tab2:Dropdown({
+    Title = "选择攻击僵尸",
+    Values = zombieDisplayNames,
+    Value = selectedZombieCN,
+    Multi = true,
+    AllowNone = true,
+    Callback = function(selectedTable)
+        selectedZombieCN = selectedTable
+    end,
+})
+
+local attackDelay = 0.1
+Tab2:Slider({
+    Title = "击杀速度",
+    Step = 0.01,
+    Value = {Min = 0.01, Max = 1, Default = 0.1},
+    Callback = function(val)
+        attackDelay = val
+    end,
+})
+
+Tab2:Toggle({
+    Title = "启动自动攻击",
+    Value = false,
+    Callback = function(on)
+        attackActive = on
+        if attackConn then
+            task.cancel(attackConn)
+            attackConn = nil
+        end
+        if on then
+            attackConn = task.spawn(function()
+                while attackActive do
+                    pcall(function()
+                        local zombieFolder = workspace.GameFolder:FindFirstChild("Zombies")
+                        if not zombieFolder then return end
+                        --循环选中的中文名字，转成英文原名查找僵尸
+                        for _,cnName in ipairs(selectedZombieCN) do
+                            local zombieRealName = zombieNameMap[cnName]
+                            if not zombieRealName then continue end
+                            local targetZombie = zombieFolder:FindFirstChild(zombieRealName)
+                            if targetZombie and targetZombie:IsA("Model") then
+                                local dmgName = selectedDamageNames
+                                local realDmg = damageMap[dmgName]
+                                if realDmg then
+                                    AttackRemote:FireServer(targetZombie, realDmg)
+                                end
+                            end
+                        end
+                    end)
+                    task.wait(attackDelay)
+                end
+            end)
+        end
+    end,
+})
+
+local attackActive = false
+local attackConn = nil
+local AttackRemote = game:GetService("ReplicatedStorage").Remotes.SendOuchies
+local damageValue = 5
+local attackDelay = 0.3
+
+Tab2:Slider({
+    Title = "攻击间隔",
+    Step = 0.01,
+    Value = {Min = 0.05, Max = 1, Default = 0.1},
+    Callback = function(val)
+        attackDelay = val
+    end,
+})
+
+--隔空伤害开关
+Tab2:Toggle({
+    Title = "爬虫者自动击杀",
+    Value = false,
+    Callback = function(on)
+        attackActive = on
+        if attackConn then
+            task.cancel(attackConn)
+            attackConn = nil
+        end
+        if on then
+            attackConn = task.spawn(function()
+                while attackActive do
+                    pcall(function()
+                        local lp = game.Players.LocalPlayer
+                        local myChar = lp.Character
+                        local humanFolder = workspace.GameFolder:FindFirstChild("Humans")
+                        if not humanFolder then return end
+
+                        for _,playerModel in ipairs(humanFolder:GetChildren()) do
+                            if playerModel:IsA("Model") and playerModel:FindFirstChild("Humanoid") and playerModel ~= myChar then
+                                AttackRemote:FireServer(playerModel, damageValue)
+                            end
+                        end
+                    end)
+                    task.wait(attackDelay)
+                end
+            end)
+        end
+    end,
+})
+
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+
+local LocalPlayer = Players.LocalPlayer
+
+--清理旧ESP
+local oldEspFolder = workspace:FindFirstChild("ESP_Folder")
+if oldEspFolder then oldEspFolder:Destroy() end
+
+local container = Instance.new("Folder")
+container.Name = "ESP_Folder"
+container.Parent = workspace
+
+local TARGET_NAMES = {
+    Zombie = true,
+    ["Crawler"] = true,
+    ["Hazard"] = true,
+    ["Boomer"] = true,
+    ["Charger"] = true,
+    ["Tank"] = true,
+}
+
+local DISPLAY_NAMES = {
+    Zombie = "僵尸",
+    ["Crawler"] = "爬行者",
+    ["Hazard"] = "危险者",
+    ["Boomer"] = "轰炸者",
+    ["Charger"] = "冲锋者",
+    ["Tank"] = "坦克",
+}
+
+local NAME_TO_TARGET = {}
+for targetName, displayName in pairs(DISPLAY_NAMES) do
+    NAME_TO_TARGET[displayName] = targetName
+end
+
+local espEnabled = false
+local currentTargets = {}
+local currentColor = Color3.fromRGB(255, 200, 60)
+local MAX_DIST = math.huge
+local targets = {}
+
+local function getHeadPart(model)
+    if not model or not model:IsA("Model") then return nil end
+    return model:FindFirstChild("Head") or model:FindFirstChildWhichIsA("BasePart")
+end
+
+local function isValidTarget(obj)
+    return TARGET_NAMES[obj.Name] ~= nil and obj:IsA("Model")
+end
+
+local function createNameTag(targetModel)
+    local headPart = getHeadPart(targetModel)
+    if not headPart then return nil end
+    local billboard = Instance.new("BillboardGui")
+    billboard.Name = "ESP_NameTag"
+    billboard.Adornee = headPart
+    billboard.Size = UDim2.new(0, 120, 0, 30)
+    billboard.StudsOffset = Vector3.new(0, 3, 0)
+    billboard.AlwaysOnTop = true
+    billboard.Enabled = espEnabled and currentTargets[targetModel.Name] == true
+    billboard.Parent = LocalPlayer.PlayerGui
+
+    local label = Instance.new("TextLabel")
+    label.Size = UDim2.new(1, 0, 1, 0)
+    label.BackgroundTransparency = 1
+    label.Text = DISPLAY_NAMES[targetModel.Name] or targetModel.Name
+    label.TextColor3 = Color3.fromRGB(255, 255, 255)
+    label.TextScaled = true
+    label.Font = Enum.Font.GothamBold
+    label.TextStrokeTransparency = 0
+    label.Parent = billboard
+    return billboard
+end
+
+local function addESP(target)
+    if targets[target] then
+        targets[target].highlight.FillColor = currentColor
+        return
+    end
+    local hl = Instance.new("Highlight")
+    hl.Adornee = target
+    hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+    hl.FillColor = currentColor
+    hl.FillTransparency = 0.6
+    hl.OutlineColor = Color3.fromRGB(255, 255, 255)
+    hl.OutlineTransparency = 0.2
+    hl.Enabled = espEnabled and currentTargets[target.Name] == true
+    hl.Parent = container
+
+    local tag = createNameTag(target)
+    targets[target] = { highlight = hl, nameTag = tag }
+end
+
+local function removeESP(obj)
+    if isValidTarget(obj) then
+        local t = targets[obj]
+        if t then
+            if t.highlight then t.highlight:Destroy() end
+            if t.nameTag then t.nameTag:Destroy() end
+            targets[obj] = nil
+        end
+    end
+end
+
+local function findTarget(parent)
+    pcall(function()
+        for _, obj in ipairs(parent:GetChildren()) do
+            if isValidTarget(obj) then
+                addESP(obj)
+            end
+            findTarget(obj)
+        end
+    end)
+end
+
+local function getPosition(obj)
+    if not obj then return nil end
+    if obj:IsA("Model") then
+        local ok, pivot = pcall(function() return obj:GetPivot().Position end)
+        if ok then return pivot end
+        local part = obj:FindFirstChildWhichIsA("BasePart", true)
+        if part then return part.Position end
+        return nil
+    elseif obj:IsA("BasePart") then
+        return obj.Position
+    end
+    return nil
+end
+
+local function refreshESP()
+    for target, t in pairs(targets) do
+        local visible = espEnabled and currentTargets[target.Name] == true
+        t.highlight.Enabled = visible
+        if t.nameTag then t.nameTag.Enabled = visible end
+    end
+end
+
+Tab2:Dropdown({
+    Title = "选择透视物品",
+    Desc = "可多选",
+    Values = (function()
+        local list = {}
+        for targetName in TARGET_NAMES do
+            table.insert(list, DISPLAY_NAMES[targetName] or targetName)
+        end
+        return list
+    end)(),
+    Multi = true,
+    Value = {["爬行者"]=true,["坦克"]=true,["危险者"]=true,["轰炸者"]=true,["冲锋者"]=true,["僵尸"]=true},
+    Callback = function(selected)
+        currentTargets = {}
+        if type(selected) == "table" then
+            for k, v in pairs(selected) do
+                if type(k) == "string" and v == true then
+                    local realName = NAME_TO_TARGET[k]
+                    if realName then currentTargets[realName] = true end
+                end
+            end
+        end
+        findTarget(workspace)
+        refreshESP()
+    end,
+})
+
+Tab2:Colorpicker({
+    Title = "透视颜色",
+    Default = currentColor,
+    Callback = function(color)
+        currentColor = color
+        for _, t in pairs(targets) do
+            t.highlight.FillColor = color
+        end
+    end,
+})
+
+Tab2:Toggle({
+    Title = "开启透视",
+    Desc = "高亮显示目标并显示头顶名字",
+    Value = false,
+    Callback = function(state)
+        espEnabled = state
+        findTarget(workspace)
+        refreshESP()
+    end,
+})
+
+findTarget(workspace)
+
+workspace.DescendantAdded:Connect(function(obj)
+    if isValidTarget(obj) then
+        task.wait(0.3)
+        if obj.Parent then
+            addESP(obj)
+        end
+    end
+end)
+
+workspace.DescendantRemoving:Connect(removeESP)
+
+task.spawn(function()
+    while true do
+        task.wait(3)
+        pcall(findTarget, workspace)
+    end
+end)
+
+RunService.Heartbeat:Connect(function()
+    pcall(function()
+        local char = LocalPlayer.Character
+        local root = char and char:FindFirstChild("HumanoidRootPart")
+
+        for target, t in pairs(targets) do
+            if not target or not target.Parent then
+                removeESP(target)
+                continue
+            end
+
+            local visible = espEnabled and currentTargets[target.Name] == true
+            if root and visible then
+                local pos = getPosition(target)
+                if pos then
+                    local dist = (root.Position - pos).Magnitude
+                    visible = dist <= MAX_DIST
+                else
+                    visible = false
+                end
+            end
+
+            t.highlight.Enabled = visible
+            if t.nameTag then t.nameTag.Enabled = visible end
+        end
+    end)
+end)
